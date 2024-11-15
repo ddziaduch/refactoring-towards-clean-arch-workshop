@@ -3,35 +3,26 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\EmergencyCall;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="officers")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'officers')]
 class Officer
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $name;
+    #[ORM\Column(type: 'string', length: 100)]
+    private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
-    private $status;
+    #[ORM\Column(type: 'string', length: 20)]
+    private ?string $status = null;
 
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\EmergencyCall")
-     * @ORM\JoinColumn(name="current_assignment_id", referencedColumnName="id", nullable=true)
-     */
-    private $currentAssignment;
+    #[ORM\OneToOne(targetEntity: EmergencyCall::class)]
+    #[ORM\JoinColumn(name: 'current_assignment_id', referencedColumnName: 'id', nullable: true)]
+    private ?EmergencyCall $currentAssignment = null;
 
     public function getId(): ?int
     {

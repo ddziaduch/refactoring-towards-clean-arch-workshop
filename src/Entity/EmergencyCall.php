@@ -4,43 +4,29 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="emergency_calls")
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'emergency_calls')]
 class EmergencyCall
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $callerName;
+    #[ORM\Column(type: 'string', length: 100)]
+    private ?string $callerName = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $location;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $location = null;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $details;
+    #[ORM\Column(type: 'text')]
+    private ?string $details = null;
 
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
-    private $priority;
+    #[ORM\Column(type: 'string', length: 20)]
+    private ?string $priority = null;
 
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
-    private $status;
+    #[ORM\Column(type: 'string', length: 20)]
+    private ?string $status = null;
 
     public function getId(): ?int
     {
