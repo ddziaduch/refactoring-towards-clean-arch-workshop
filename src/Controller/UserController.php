@@ -24,10 +24,10 @@ class UserController extends AbstractController
     ): JsonResponse {
         $json = json_decode($request->getContent(), true);
         $user = $userRepository->findOneBy([
-            'username' => $json['user']['username'],
+            'username' => $json['user']['username'] ?? throw new UnprocessableEntityHttpException('user.email must be set'),
         ]);
 
-        if (!$user || !$userPasswordHasher->isPasswordValid($user, $json['user']['password'])) {
+        if (!$user || !$userPasswordHasher->isPasswordValid($user, $json['user']['password'] ?? throw new UnprocessableEntityHttpException('user.password must be set'))) {
             return $this->json('Could not login', 401);
         }
 
