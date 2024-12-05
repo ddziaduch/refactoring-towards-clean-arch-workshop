@@ -16,6 +16,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
+    private string $password;
+
     public function __construct(
         #[ORM\Column(length: 2000)]
         private string $bio,
@@ -28,13 +34,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         #[ORM\Column(length: 100, unique: true)]
         private string $username,
-
-        /**
-         * @var string The hashed password
-         */
-        #[ORM\Column]
-        private string $password,
     ) {
+    }
+
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
     }
 
 

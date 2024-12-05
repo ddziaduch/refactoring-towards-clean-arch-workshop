@@ -24,7 +24,7 @@ class UserController extends AbstractController
             'username' => $json['user']['username'],
         ]);
 
-        if (!$user || !$userPasswordHasher->isPasswordValid($user, $json['user']['username'])) {
+        if (!$user || !$userPasswordHasher->isPasswordValid($user, $json['user']['password'])) {
             return $this->json('Could not login', 401);
         }
 
