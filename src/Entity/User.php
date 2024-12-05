@@ -19,18 +19,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
-    private string $password;
+    #[ORM\Column()]
+    private string $password = '';
+
+    #[ORM\Column(length: 2000, nullable: true)]
+    private ?string $bio = null;
+
+    #[ORM\Column(length: 2000, nullable: true)]
+    private ?string $image = null;
 
     public function __construct(
-        #[ORM\Column(length: 2000)]
-        private string $bio,
-
         #[ORM\Column(length: 100, unique: true)]
         private string $email,
-
-        #[ORM\Column(length: 2000)]
-        private string $image,
 
         #[ORM\Column(length: 100, unique: true)]
         private string $username,

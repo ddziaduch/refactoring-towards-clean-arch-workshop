@@ -19,9 +19,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $user = new User(
-            'bio',
             'test@example.com',
-            'https://localhost/1.png',
             'test',
         );
 
