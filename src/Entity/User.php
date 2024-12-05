@@ -56,11 +56,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return list<string>
      * @see UserInterface
-     *
      */
     public function getRoles(): array
     {
-        return [];
+        return ['ROLE_USER'];
     }
 
     /**
