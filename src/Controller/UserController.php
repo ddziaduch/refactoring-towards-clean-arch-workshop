@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class UserController extends AbstractController
 {
@@ -51,6 +52,14 @@ class UserController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
+        return $this->json($user->toDto($JWTTokenManager->create($user)));
+    }
+
+    #[Route('/api/user', name: 'current', methods: ['GET'])]
+    public function current(
+        #[CurrentUser] ?User $user,
+        JWTTokenManagerInterface $JWTTokenManager,
+    ): JsonResponse {
         return $this->json($user->toDto($JWTTokenManager->create($user)));
     }
 }
