@@ -50,7 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return $this->username;
+        return $this->email;
     }
 
     /**
@@ -79,14 +79,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function toDto(string $token): array
+    public function getBio(): ?string
     {
-        return [
-            'bio' => $this->bio,
-            'email' => $this->email,
-            'image' => $this->image,
-            'token' => $token,
-            'username' => $this->username,
-        ];
+        return $this->bio;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->username;
     }
 }
