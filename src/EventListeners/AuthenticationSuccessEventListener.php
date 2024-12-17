@@ -17,10 +17,10 @@ class AuthenticationSuccessEventListener
                 'user' => array_merge(
                     $event->getData(),
                     [
-                        'bio' => $user->getBio(),
-                        'email' => $user->getEmail(),
-                        'image' => $user->getImage(),
-                        'username' => $user->getUsername(),
+                        'bio' => $user->bio,
+                        'email' => $user->email,
+                        'image' => $user->image,
+                        'username' => $user->username,
                     ],
                 ),
             ],

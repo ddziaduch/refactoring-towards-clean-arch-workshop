@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[AsController]
 class UsersController extends AbstractController
 {
-    #[Route('/api/users', name: 'create', methods: ['POST'])]
+    #[Route('/api/users', name: 'create-user', methods: ['POST'])]
     public function create(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
@@ -30,7 +30,7 @@ class UsersController extends AbstractController
             $json['user']['email'] ?? throw new UnprocessableEntityHttpException('user.email must be set'),
             $json['user']['username'] ?? new UnprocessableEntityHttpException('user.username must be set'),
         );
-        $user->setPassword($userPasswordHasher->hashPassword($user, $json['user']['password'] ?? throw new UnprocessableEntityHttpException('user.password must be set')));
+        $user->password = $userPasswordHasher->hashPassword($user, $json['user']['password'] ?? throw new UnprocessableEntityHttpException('user.password must be set'));
 
         $entityManager->persist($user);
         $entityManager->flush();
@@ -38,33 +38,68 @@ class UsersController extends AbstractController
         return $this->json(
             [
                 'user' => [
-                    'bio' => $user->getBio(),
-                    'email' => $user->getEmail(),
-                    'image' => $user->getImage(),
+                    'bio' => $user->bio,
+                    'email' => $user->email,
+                    'image' => $user->image,
                     'token' => $JWTTokenManager->create($user),
-                    'username' => $user->getUsername(),
+                    'username' => $user->username,
                 ],
             ],
         );
     }
 
-    #[Route('/api/user', name: 'current', methods: ['GET'])]
+    #[Route('/api/user', name: 'current-user', methods: ['GET'])]
     public function current(
-        #[CurrentUser] ?User $user,
+        #[CurrentUser] User $user,
         JWTTokenManagerInterface $JWTTokenManager,
     ): JsonResponse {
-        if ($user === null) {
-            throw new NotFoundHttpException();
+        return $this->json(
+            [
+                'user' => [
+                    'bio' => $user->bio,
+                    'email' => $user->email,
+                    'image' => $user->image,
+                    'token' => $JWTTokenManager->create($user),
+                    'username' => $user->username,
+                ],
+            ],
+        );
+    }
+
+    #[Route('/api/user', name: 'update-user', methods: ['PUT'])]
+    public function update(
+        #[CurrentUser] User $user,
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager,
+        JWTTokenManagerInterface $JWTTokenManager,
+    ): JsonResponse {
+        $updateData = json_decode($request->getContent(), true)['user'];
+
+        if (isset($updateData['email'])) {
+            $user->email = $updateData['email'];
         }
+        if (isset($updateData['password'])) {
+            $user->password = $userPasswordHasher->hashPassword($user, $updateData['password']);
+        }
+        if (isset($updateData['bio'])) {
+            $user->bio = $updateData['bio'];
+        }
+        if (isset($updateData['image'])) {
+            $user->image = $updateData['image'];
+        }
+
+        $entityManager->persist($user);
+        $entityManager->flush();
 
         return $this->json(
             [
                 'user' => [
-                    'bio' => $user->getBio(),
-                    'email' => $user->getEmail(),
-                    'image' => $user->getImage(),
+                    'bio' => $user->bio,
+                    'email' => $user->email,
+                    'image' => $user->image,
                     'token' => $JWTTokenManager->create($user),
-                    'username' => $user->getUsername(),
+                    'username' => $user->username,
                 ],
             ],
         );

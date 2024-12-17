@@ -20,28 +20,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column()]
-    private string $password = '';
+    public string $password = '';
 
     #[ORM\Column(length: 2000, nullable: true)]
-    private ?string $bio = null;
+    public ?string $bio = null;
 
     #[ORM\Column(length: 2000, nullable: true)]
-    private ?string $image = null;
+    public ?string $image = null;
 
     public function __construct(
         #[ORM\Column(length: 100, unique: true)]
-        private string $email,
+        public string $email,
 
         #[ORM\Column(length: 100, unique: true)]
-        private string $username,
+        public string $username,
     ) {
     }
-
-    public function setPassword(string $password): void
-    {
-        $this->password = $password;
-    }
-
 
     /**
      * A visual identifier that represents this user.
@@ -77,25 +71,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
-
-    public function getBio(): ?string
-    {
-        return $this->bio;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function getUsername(): string
-    {
-        return $this->username;
     }
 }

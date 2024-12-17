@@ -22,8 +22,7 @@ class AppFixtures extends Fixture
             'test@example.com',
             'test',
         );
-
-        $user->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
+        $user->password = $this->passwordHasher->hashPassword($user, 'password123');
 
         $manager->persist($user);
 
