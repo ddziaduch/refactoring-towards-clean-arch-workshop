@@ -18,13 +18,14 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        $user = new User(
-            'test@example.com',
-            'test',
-        );
-        $user->password = $this->passwordHasher->hashPassword($user, 'password123');
-
-        $manager->persist($user);
+        foreach (['first', 'second'] as $name) {
+            $user = new User(
+                sprintf('%s@example.com', $name),
+                $name,
+            );
+            $user->password = $this->passwordHasher->hashPassword($user, $name);
+            $manager->persist($user);
+        }
 
         $manager->flush();
     }

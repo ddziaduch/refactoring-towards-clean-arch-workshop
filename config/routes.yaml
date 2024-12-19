@@ -4,5 +4,5 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-api_users_login:
+Login:
     path: /api/users/login

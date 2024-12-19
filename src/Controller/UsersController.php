@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[AsController]
 class UsersController extends AbstractController
 {
-    #[Route('/api/users', name: 'create-user', methods: ['POST'])]
+    #[Route('/api/users', name: 'CreateUser', methods: ['POST'])]
     public function create(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
@@ -48,7 +48,7 @@ class UsersController extends AbstractController
         );
     }
 
-    #[Route('/api/user', name: 'current-user', methods: ['GET'])]
+    #[Route('/api/user', name: 'GetCurrentUser', methods: ['GET'])]
     public function current(
         #[CurrentUser] User $user,
         JWTTokenManagerInterface $JWTTokenManager,
@@ -66,7 +66,7 @@ class UsersController extends AbstractController
         );
     }
 
-    #[Route('/api/user', name: 'update-user', methods: ['PUT'])]
+    #[Route('/api/user', name: 'UpdateCurrentUser', methods: ['PUT'])]
     public function update(
         #[CurrentUser] User $user,
         Request $request,

@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinTable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -14,7 +17,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    public ?int $id = null;
 
     /**
      * @var string The hashed password
@@ -28,6 +31,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 2000, nullable: true)]
     public ?string $image = null;
 
+    /**
+     * @var Collection<array-key, self>
+     */
+    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'following')]
+    public Collection $followers;
+
+    /**
+     * @var Collection<array-key, self>
+     */
+    #[ORM\JoinTable(name: 'followers')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'follower_id', referencedColumnName: 'id')]
+    #[ORM\ManyToMany(targetEntity: 'User', inversedBy: 'followers')]
+    public Collection $following;
+
     public function __construct(
         #[ORM\Column(length: 100, unique: true)]
         public string $email,
@@ -35,6 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         #[ORM\Column(length: 100, unique: true)]
         public string $username,
     ) {
+        $this->following = new ArrayCollection();
     }
 
     /**
