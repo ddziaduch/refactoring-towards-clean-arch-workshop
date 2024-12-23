@@ -25,7 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column()]
     public string $password = '';
 
-    #[ORM\Column(length: 2000, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     public ?string $bio = null;
 
     #[ORM\Column(length: 2000, nullable: true)]
@@ -36,6 +36,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'following')]
     public Collection $followers;
+
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'author')]
+    public Collection $articles;
 
     /**
      * @var Collection<array-key, self>
