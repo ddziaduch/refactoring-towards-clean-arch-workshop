@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,13 +24,16 @@ class ArticleController
         EntityManagerInterface $entityManager,
         SluggerInterface $slugger,
     ) {
-        $payload = json_decode($request->getContent(), true)['article'];
-        $body = $payload['body'] ?? throw new BadRequestHttpException('Missing body');
-        $description = $payload['description'] ?? throw new BadRequestHttpException('Missing description');
+        $payload = json_decode($request->getContent(), true)['article'] ?? throw new BadRequestHttpException('Missing article');
         $title = $payload['title'] ?? throw new BadRequestHttpException('Missing title');
-        $slug = $slugger->slug($title);
-        $tagList = new ArrayCollection($payload['tagList'] ?? []);
-        $article = new Article($slug, $title, $description, $body, $tagList, $user);
+        $article = new Article(
+            $slugger->slug($title),
+            $title,
+            $payload['description'] ?? throw new BadRequestHttpException('Missing description'),
+            $payload['body'] ?? throw new BadRequestHttpException('Missing body'),
+                $payload['tagList'] ?? null,
+            $user,
+        );
         $entityManager->persist($article);
         $entityManager->flush();
 
@@ -39,19 +42,52 @@ class ArticleController
                 'article' => [
                     'author' => [
                         'bio' => $user->bio,
-                        'following' => false,
+                        'following' => $user->following->contains($user),
                         'image' => $user->image,
                         'username' => $user->username,
                     ],
-                    'body' => $body,
-                    'createdAt' => '',
-                    'description' => $description,
-                    'favorited' => false,
-                    'favoritesCount' => 0,
-                    'slug' => $slug,
-                    'tagList' => $tagList->toArray(),
-                    'title' => $title,
-                    'updatedAt' => '',
+                    'body' => $article->body,
+                    'createdAt' => $article->createdAt->format(DATE_ATOM),
+                    'description' => $article->description,
+                    'favorited' => $user->favorites->contains($article),
+                    'favoritesCount' => $article->favoritedBy->count(),
+                    'slug' => $article->slug,
+                    'tagList' => $article->tagList ?? [],
+                    'title' => $article->title,
+                    'updatedAt' => $article->updatedAt->format(DATE_ATOM),
+                ],
+            ],
+        );
+    }
+
+    #[Route('/api/articles/{slug}', name: 'GetArticle', methods: ['GET'])]
+    public function get(
+        string $slug,
+        Request $request,
+        #[CurrentUser] ?User $user,
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger,
+    ): Response {
+        $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
+
+        return new JsonResponse(
+            [
+                'article' => [
+                    'author' => [
+                        'bio' => $article->author->bio,
+                        'following' => $user ? $article->author->following->contains($user) : false,
+                        'image' => $user->image,
+                        'username' => $user->username,
+                    ],
+                    'body' => $article->body,
+                    'createdAt' => $article->createdAt->format(DATE_ATOM),
+                    'description' => $article->description,
+                    'favorited' => $user->favorites->contains($article),
+                    'favoritesCount' => $article->favoritedBy->count(),
+                    'slug' => $article->slug,
+                    'tagList' => $article->tagList ?? [],
+                    'title' => $article->title,
+                    'updatedAt' => $article->updatedAt->format(DATE_ATOM),
                 ],
             ],
         );

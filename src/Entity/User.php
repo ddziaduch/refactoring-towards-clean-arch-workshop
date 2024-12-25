@@ -37,6 +37,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'following')]
     public Collection $followers;
 
+    /**
+     * @var Collection<array-key, Article>
+     */
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'author')]
     public Collection $articles;
 
@@ -46,8 +49,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinTable(name: 'followers')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     #[ORM\InverseJoinColumn(name: 'follower_id', referencedColumnName: 'id')]
-    #[ORM\ManyToMany(targetEntity: 'User', inversedBy: 'followers')]
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'followers')]
     public Collection $following;
+
+    /**
+     * @var Collection<array-key, Article>
+     */
+    #[ORM\JoinTable(name: 'favorites')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'article_id', referencedColumnName: 'id')]
+    #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'favoritedBy')]
+    public Collection $favorites;
 
     public function __construct(
         #[ORM\Column(length: 100, unique: true)]
@@ -57,6 +69,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         public string $username,
     ) {
         $this->following = new ArrayCollection();
+        $this->followers = new ArrayCollection();
+        $this->articles = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
     }
 
     /**
