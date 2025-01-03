@@ -44,27 +44,7 @@ class ArticleController
             throw new BadRequestHttpException('Article already exists');
         }
 
-        return new JsonResponse(
-            [
-                'article' => [
-                    'author' => [
-                        'bio' => $user->bio,
-                        'following' => $user->following->contains($user),
-                        'image' => $user->image,
-                        'username' => $user->username,
-                    ],
-                    'body' => $article->body,
-                    'createdAt' => $article->createdAt->format(DATE_ATOM),
-                    'description' => $article->description,
-                    'favorited' => $user->favorites->contains($article),
-                    'favoritesCount' => $article->favoritedBy->count(),
-                    'slug' => $article->slug,
-                    'tagList' => $article->tagList ?? [],
-                    'title' => $article->title,
-                    'updatedAt' => $article->updatedAt->format(DATE_ATOM),
-                ],
-            ],
-        );
+        return new JsonResponse($this->view($article, $user));
     }
 
     #[Route('/api/articles/{slug}', name: 'GetArticle', methods: ['GET'])]
@@ -79,27 +59,7 @@ class ArticleController
             return new JsonResponse('Article not found', 422);
         }
 
-        return new JsonResponse(
-            [
-                'article' => [
-                    'author' => [
-                        'bio' => $article->author->bio,
-                        'following' => $user && $article->author->following->contains($user),
-                        'image' => $user->image,
-                        'username' => $user->username,
-                    ],
-                    'body' => $article->body,
-                    'createdAt' => $article->createdAt->format(DATE_ATOM),
-                    'description' => $article->description,
-                    'favorited' => $user && $user->favorites->contains($article),
-                    'favoritesCount' => $article->favoritedBy->count(),
-                    'slug' => $article->slug,
-                    'tagList' => $article->tagList ?? [],
-                    'title' => $article->title,
-                    'updatedAt' => $article->updatedAt->format(DATE_ATOM),
-                ],
-            ],
-        );
+        return new JsonResponse($this->view($article, $user));
     }
 
     #[Route('/api/articles/{slug}', name: 'DeleteArticle', methods: ['DELETE'])]
@@ -118,5 +78,72 @@ class ArticleController
         $entityManager->flush();
 
         return new Response();
+    }
+
+    #[Route('/api/articles/{slug}/favorite', name: 'CreateArticleFavorite', methods: ['POST'])]
+    public function favorite(
+        string $slug,
+        #[CurrentUser] User $user,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
+
+        if (!$article) {
+            return new JsonResponse('Article not found', 422);
+        }
+
+        if (!$user->favorites->contains($article)) {
+            $user->favorites->add($article);
+        }
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse($this->view($article, $user));
+    }
+
+    #[Route('/api/articles/{slug}/favorite', name: 'DeleteArticleFavorite', methods: ['DELETE'])]
+    public function unfavorite(
+        string $slug,
+        #[CurrentUser] User $user,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
+
+        if (!$article) {
+            return new JsonResponse('Article not found', 422);
+        }
+
+        if ($user->favorites->contains($article)) {
+            $user->favorites->removeElement($article);
+        }
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse($this->view($article, $user));
+    }
+
+    public function view(Article $article, ?User $user): array
+    {
+        return[
+            'article' => [
+                'author' => [
+                    'bio' => $article->author->bio,
+                    'following' => $user && $article->author->following->contains($user),
+                    'image' => $user->image,
+                    'username' => $user->username,
+                ],
+                'body' => $article->body,
+                'createdAt' => $article->createdAt->format(DATE_ATOM),
+                'description' => $article->description,
+                'favorited' => $user && $user->favorites->contains($article),
+                'favoritesCount' => $article->favoritedBy->count(),
+                'slug' => $article->slug,
+                'tagList' => $article->tagList ?? [],
+                'title' => $article->title,
+                'updatedAt' => $article->updatedAt->format(DATE_ATOM),
+            ],
+        ];
     }
 }
