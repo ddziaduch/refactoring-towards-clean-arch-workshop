@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -63,26 +64,28 @@ class ArticleController
     #[Route('/api/articles/{slug}', name: 'GetArticle', methods: ['GET'])]
     public function get(
         string $slug,
-        Request $request,
         #[CurrentUser] ?User $user,
         EntityManagerInterface $entityManager,
-        SluggerInterface $slugger,
     ): Response {
         $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
+
+        if (!$article) {
+            return new JsonResponse('Article not found', 422);
+        }
 
         return new JsonResponse(
             [
                 'article' => [
                     'author' => [
                         'bio' => $article->author->bio,
-                        'following' => $user ? $article->author->following->contains($user) : false,
+                        'following' => $user && $article->author->following->contains($user),
                         'image' => $user->image,
                         'username' => $user->username,
                     ],
                     'body' => $article->body,
                     'createdAt' => $article->createdAt->format(DATE_ATOM),
                     'description' => $article->description,
-                    'favorited' => $user->favorites->contains($article),
+                    'favorited' => $user && $user->favorites->contains($article),
                     'favoritesCount' => $article->favoritedBy->count(),
                     'slug' => $article->slug,
                     'tagList' => $article->tagList ?? [],
@@ -91,5 +94,23 @@ class ArticleController
                 ],
             ],
         );
+    }
+
+    #[Route('/api/articles/{slug}', name: 'DeleteArticle', methods: ['DELETE'])]
+    public function delete(
+        string $slug,
+        #[CurrentUser] User $user,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug, 'author' => $user]);
+
+        if (!$article) {
+            return new JsonResponse('Article not found', 422);
+        }
+
+        $entityManager->remove($article);
+        $entityManager->flush();
+
+        return new Response();
     }
 }

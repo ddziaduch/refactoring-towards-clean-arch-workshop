@@ -24,7 +24,7 @@ class Article
     public Collection $favoritedBy;
 
     public function __construct(
-        #[ORM\Column(type: 'text')]
+        #[ORM\Column(type: 'text', unique: true)]
         public string $slug,
         #[ORM\Column(type: 'text')]
         public string $title,
