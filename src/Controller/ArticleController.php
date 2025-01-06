@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -21,6 +20,95 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[AsController]
 class ArticleController
 {
+    #[Route('/api/articles', name: 'GetArticles', methods: ['GET'])]
+    public function getArticles(
+        EntityManagerInterface $entityManager,
+        #[CurrentUser] ?User $user,
+        Request $request,
+    ) {
+        $queryBuilder = $entityManager
+            ->getRepository(Article::class)
+            ->createQueryBuilder('article')
+            ->setMaxResults($request->query->getInt('limit', 20))
+            ->setFirstResult($request->query->getInt('offset', 0));
+
+        $tag = $request->query->getString('tag', '');
+        $author = $request->query->getString('author', '');
+        $favorited = $request->query->getString('favorited', '');
+
+        if ($tag !== '') {
+            $queryBuilder = $queryBuilder
+                ->innerJoin('article.tagList', 'tag')
+                ->andWhere('tag.value = :tag')
+                ->setParameter('tag', $tag);
+        }
+
+        if ($author !== '') {
+            $queryBuilder = $queryBuilder
+                ->innerJoin('article.author', 'author')
+                ->andWhere('author.username = :author')
+                ->setParameter('author', $author);
+        }
+
+        if ($favorited !== '') {
+            $queryBuilder = $queryBuilder
+                ->innerJoin('article.favoritedBy', 'favorited')
+                ->andWhere('favorited.username = :favorited')
+                ->setParameter('favorited', $favorited);
+        }
+
+        $articles = $queryBuilder->getQuery()->getResult();
+
+        return new JsonResponse([
+            'articles' => array_map(
+                fn(Article $article): array => $this->view($article, $user),
+                $articles,
+            ),
+            'articleCount' => count($articles),
+        ]);
+    }
+
+    #[Route('/api/articles/feed', name: 'GetArticlesFeed', methods: ['GET'])]
+    public function getArticlesFeed(
+        EntityManagerInterface $entityManager,
+        #[CurrentUser] User $user,
+        Request $request,
+    ): Response {
+        $authors = $user->following->map(
+            fn(User $user) => $user->username,
+        )->toArray();
+
+        if (empty($authors)) {
+            return new JsonResponse([
+                'articles' => [],
+                'articleCount' => 0,
+            ]);
+        }
+
+        $queryBuilder = $entityManager
+            ->getRepository(Article::class)
+            ->createQueryBuilder('article')
+            ->setMaxResults($request->query->getInt('limit', 20))
+            ->setFirstResult($request->query->getInt('offset', 0))
+            ->innerJoin('article.author', 'author')
+            ->andWhere('author.username IN (:authors)')
+            ->setParameter(
+                'authors',
+                $authors,
+            );
+
+
+        $articles = $queryBuilder->getQuery()->getResult();
+
+        return new JsonResponse([
+            'articles' => array_map(
+                fn(Article $article): array => $this->view($article, $user),
+                $articles,
+            ),
+            'articleCount' => count($articles),
+        ]);
+    }
+
     #[Route('/api/articles', name: 'CreateArticle', methods: ['POST'])]
     public function create(
         Request $request,
