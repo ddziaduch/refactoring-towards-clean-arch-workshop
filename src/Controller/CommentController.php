@@ -20,7 +20,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class CommentController
 {
     #[Route('/api/articles/{slug}/comments', name: 'CreateArticleComment', methods: ['POST'])]
-    public function create(
+    public function createArticleComment(
         string $slug,
         #[CurrentUser] User $user,
         Request $request,
@@ -82,7 +82,7 @@ class CommentController
     }
 
     #[Route('/api/articles/{slug}/comments/{id}', name: 'DeleteArticleComment', methods: ['DELETE'])]
-    public function delete(
+    public function deleteArticleComment(
         string $slug,
         int $id,
         #[CurrentUser] User $user,
