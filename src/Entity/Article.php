@@ -22,6 +22,9 @@ class Article
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'favorites')]
     public Collection $favoritedBy;
 
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'article')]
+    public Collection $comments;
+
     public function __construct(
         #[ORM\Column(type: 'text', unique: true)]
         public string $slug,

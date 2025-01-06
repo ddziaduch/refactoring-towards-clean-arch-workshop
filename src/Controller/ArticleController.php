@@ -141,8 +141,8 @@ class ArticleController
                 'author' => [
                     'bio' => $article->author->bio,
                     'following' => $user && $article->author->following->contains($user),
-                    'image' => $user->image,
-                    'username' => $user->username,
+                    'image' => $article->author->image,
+                    'username' => $article->author->username,
                 ],
                 'body' => $article->body,
                 'createdAt' => $article->createdAt->format(DATE_ATOM),
@@ -150,9 +150,7 @@ class ArticleController
                 'favorited' => $user && $user->favorites->contains($article),
                 'favoritesCount' => $article->favoritedBy->count(),
                 'slug' => $article->slug,
-                'tagList' => $article->tagList->map(function (Tag $tag) {
-                    return $tag->value;
-                })->toArray(),
+                'tagList' => $article->tagList->map(fn(Tag $tag) => $tag->value)->toArray(),
                 'title' => $article->title,
                 'updatedAt' => $article->updatedAt->format(DATE_ATOM),
             ],
