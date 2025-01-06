@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -33,10 +32,10 @@ class Article
         #[ORM\Column(type: 'text')]
         public string $body,
         /**
-         * @var string[]
+         * @var Collection<Tag>
          */
-        #[ORM\Column(type: 'simple_array', nullable: true)]
-        public ?array $tagList,
+        #[ORM\ManyToMany(targetEntity: Tag::class, cascade: ['persist'], orphanRemoval: true)]
+        public Collection $tagList,
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'articles')]
         public User $author,
     ) {

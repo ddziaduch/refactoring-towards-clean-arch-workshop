@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Tag;
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,12 +30,20 @@ class ArticleController
     ) {
         $payload = json_decode($request->getContent(), true)['article'] ?? throw new BadRequestHttpException('Missing article');
         $title = $payload['title'] ?? throw new BadRequestHttpException('Missing title');
+        $tagList = $payload['tagList'] ?? [];
+        $tagEntities = new ArrayCollection();
+
+        foreach ($tagList as $value) {
+            $tagEntity = $entityManager->getRepository(Tag::class)->findOneBy(['value' => $value]) ?? new Tag($value);
+            $tagEntities->add($tagEntity);
+        }
+
         $article = new Article(
             $slugger->slug($title),
             $title,
             $payload['description'] ?? throw new BadRequestHttpException('Missing description'),
             $payload['body'] ?? throw new BadRequestHttpException('Missing body'),
-                $payload['tagList'] ?? null,
+            $tagEntities,
             $user,
         );
         $entityManager->persist($article);
@@ -126,7 +136,7 @@ class ArticleController
 
     public function view(Article $article, ?User $user): array
     {
-        return[
+        return [
             'article' => [
                 'author' => [
                     'bio' => $article->author->bio,
@@ -140,7 +150,9 @@ class ArticleController
                 'favorited' => $user && $user->favorites->contains($article),
                 'favoritesCount' => $article->favoritedBy->count(),
                 'slug' => $article->slug,
-                'tagList' => $article->tagList ?? [],
+                'tagList' => $article->tagList->map(function (Tag $tag) {
+                    return $tag->value;
+                })->toArray(),
                 'title' => $article->title,
                 'updatedAt' => $article->updatedAt->format(DATE_ATOM),
             ],
