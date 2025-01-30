@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Entity;
+namespace App\ArticleMgmt\Domain\Entity;
 
+use App\Entity\Comment;
+use App\Entity\Tag;
+use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +16,7 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    public ?int $id = null;
+    public int $id;
     #[ORM\Column]
     public \DateTimeImmutable $createdAt;
     #[ORM\Column]
@@ -40,7 +43,7 @@ class Article
         #[ORM\ManyToMany(targetEntity: Tag::class, cascade: ['persist'], orphanRemoval: true)]
         public Collection $tagList,
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'articles')]
-        public User $author,
+        public readonly User $author,
     ) {
         $now = new \DateTimeImmutable();
 

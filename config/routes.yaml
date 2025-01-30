@@ -4,5 +4,11 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+articleMgmtControllers:
+    resource:
+        path: ../src/ArticleMgmt/Presentation
+        namespace: App\ArticleMgmt\Presentation
+    type: attribute
+
 Login:
     path: /api/users/login

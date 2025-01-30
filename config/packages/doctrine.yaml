@@ -16,6 +16,12 @@ doctrine:
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         mappings:
+            App\ArticleMgmt\Domain:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/ArticleMgmt/Domain/Entity'
+                prefix: 'App\ArticleMgmt\Domain\Entity'
+                alias: App
             App:
                 type: attribute
                 is_bundle: false
