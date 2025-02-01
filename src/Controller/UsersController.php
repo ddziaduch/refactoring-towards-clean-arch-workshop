@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -31,8 +33,12 @@ class UsersController extends AbstractController
         );
         $user->password = $userPasswordHasher->hashPassword($user, $json['user']['password'] ?? throw new UnprocessableEntityHttpException('user.password must be set'));
 
-        $entityManager->persist($user);
-        $entityManager->flush();
+        try {
+            $entityManager->persist($user);
+            $entityManager->flush();
+        } catch (UniqueConstraintViolationException) {
+            throw new UnprocessableEntityHttpException('User already exists');
+        }
 
         return $this->json(
             [
@@ -44,6 +50,7 @@ class UsersController extends AbstractController
                     'username' => $user->username,
                 ],
             ],
+            Response::HTTP_CREATED,
         );
     }
 
