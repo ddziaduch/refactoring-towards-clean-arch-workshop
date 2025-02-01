@@ -8,7 +8,7 @@ use App\ArticleMgmt\Application\ArticleService;
 use App\ArticleMgmt\Domain\ArticleDoesNotExist;
 use App\ArticleMgmt\Domain\Entity\Article;
 use App\Entity\Tag;
-use App\Entity\User;
+use App\Framework\Symfony\Component\Security\Core\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

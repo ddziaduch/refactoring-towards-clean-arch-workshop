@@ -1,7 +1,8 @@
 <?php
 
-namespace App\EventListeners;
+namespace App\Framework\Lexik\Bundle\JWTAuthenticationBundle;
 
+use App\Framework\Symfony\Component\Security\Core\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -12,6 +13,8 @@ class AuthenticationSuccessEventListener
     public function __invoke(AuthenticationSuccessEvent $event): void
     {
         $user = $event->getUser();
+        assert($user instanceof User);
+
         $event->setData(
             [
                 'user' => array_merge(

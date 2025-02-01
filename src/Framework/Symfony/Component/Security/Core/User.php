@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Entity;
+namespace App\Framework\Symfony\Component\Security\Core;
 
 use App\ArticleMgmt\Domain\Entity\Article;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinTable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -18,13 +17,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    public ?int $id = null;
+    public int $id;
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column()]
-    public string $password = '';
+    public string $password;
 
     #[ORM\Column(type: 'text', nullable: true)]
     public ?string $bio = null;

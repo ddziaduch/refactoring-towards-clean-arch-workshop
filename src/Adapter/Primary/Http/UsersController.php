@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controller;
+namespace App\Adapter\Primary\Http;
 
-use App\Entity\User;
+use App\Framework\Symfony\Component\Security\Core\User;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;

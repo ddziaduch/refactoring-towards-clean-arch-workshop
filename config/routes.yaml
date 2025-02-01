@@ -10,5 +10,11 @@ articleMgmtControllers:
         namespace: App\ArticleMgmt\Presentation
     type: attribute
 
+adapters:
+    resource:
+        path: ../src/Adapter/Primary/Http
+        namespace: App\Adapter\Primary\Http
+    type: attribute
+
 Login:
     path: /api/users/login

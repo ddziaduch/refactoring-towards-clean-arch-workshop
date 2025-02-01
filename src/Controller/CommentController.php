@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\ArticleMgmt\Domain\Entity\Article;
 use App\Entity\Comment;
-use App\Entity\User;
+use App\Framework\Symfony\Component\Security\Core\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\ArticleMgmt\Domain\Entity\Article;
+use App\Framework\Symfony\Component\Security\Core\User;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
