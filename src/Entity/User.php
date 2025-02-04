@@ -35,31 +35,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<array-key, self>
      */
-    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'following')]
+    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'following', cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $followers;
 
     /**
      * @var Collection<array-key, Article>
      */
-    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'author')]
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'author', cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $articles;
 
     /**
      * @var Collection<array-key, self>
      */
     #[ORM\JoinTable(name: 'followers')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'follower_id', referencedColumnName: 'id')]
-    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'followers')]
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'followers', cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $following;
 
     /**
      * @var Collection<array-key, Article>
      */
     #[ORM\JoinTable(name: 'favorites')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\InverseJoinColumn(name: 'article_id', referencedColumnName: 'id')]
-    #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'favoritedBy')]
+    #[ORM\ManyToMany(targetEntity: Article::class, inversedBy: 'favoritedBy', cascade: ['persist', 'remove'], orphanRemoval: true)]
     public Collection $favorites;
 
     public function __construct(

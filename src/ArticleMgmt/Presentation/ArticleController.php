@@ -107,7 +107,7 @@ class ArticleController
             throw new BadRequestHttpException($exception->getMessage(), $exception);
         }
 
-        return new JsonResponse($this->view($article, $user, $user));
+        return new JsonResponse($this->view($article, $user, $user),  Response::HTTP_CREATED);
     }
 
     #[Route('/api/articles/{slug}', name: 'GetArticle', methods: ['GET'])]

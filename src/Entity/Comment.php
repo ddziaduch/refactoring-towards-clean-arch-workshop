@@ -18,9 +18,15 @@ class Comment
     public readonly \DateTimeImmutable $updatedAt;
 
     public function __construct(
-        #[ORM\ManyToOne(targetEntity: Article::class)]
+        #[
+            ORM\JoinColumn(onDelete: 'CASCADE'),
+            ORM\ManyToOne(targetEntity: Article::class),
+        ]
         public readonly Article $article,
-        #[ORM\ManyToOne(targetEntity: User::class)]
+        #[
+            ORM\JoinColumn(onDelete: 'CASCADE'),
+            ORM\ManyToOne(targetEntity: User::class),
+        ]
         public readonly User $author,
         #[ORM\Column(type: 'text')]
         public readonly string $body,
