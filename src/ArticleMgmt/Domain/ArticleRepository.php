@@ -2,7 +2,7 @@
 
 namespace App\ArticleMgmt\Domain;
 
-use App\ArticleMgmt\Domain\Entity\Article;
+use App\Domain\Entity\Article;
 
 interface ArticleRepository
 {

@@ -2,7 +2,7 @@
 
 namespace App\ArticleMgmt\Domain;
 
-use App\Entity\Tag;
+use App\Domain\Entity\Tag;
 use Doctrine\Common\Collections\Collection;
 
 interface TagRepository

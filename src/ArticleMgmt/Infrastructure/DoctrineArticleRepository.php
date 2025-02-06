@@ -4,7 +4,7 @@ namespace App\ArticleMgmt\Infrastructure;
 
 use App\ArticleMgmt\Domain\ArticleAlreadyExists;
 use App\ArticleMgmt\Domain\ArticleDoesNotExist;
-use App\ArticleMgmt\Domain\Entity\Article;
+use App\Domain\Entity\Article;
 use App\ArticleMgmt\Domain\ArticleRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;

@@ -6,8 +6,8 @@ use App\ArticleMgmt\Domain\ArticleAlreadyExists;
 use App\ArticleMgmt\Domain\ArticleDoesNotExist;
 use App\ArticleMgmt\Domain\ArticleRepository;
 use App\ArticleMgmt\Domain\TagRepository;
-use App\ArticleMgmt\Domain\Entity\Article;
-use App\Entity\Tag;
+use App\Domain\Entity\Article;
+use App\Domain\Entity\Tag;
 use App\Repository\UserRepository;
 
 final readonly class ArticleService
