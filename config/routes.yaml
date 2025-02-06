@@ -4,6 +4,12 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+adapters:
+    type: attribute
+    resource:
+        path: ../src/Adapter/In/Http
+        namespace: App\Adapter\In\Http
+
 articleMgmtControllers:
     resource:
         path: ../src/ArticleMgmt/Presentation

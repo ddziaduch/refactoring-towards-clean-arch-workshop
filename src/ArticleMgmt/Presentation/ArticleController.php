@@ -83,33 +83,6 @@ class ArticleController
         ]);
     }
 
-    #[Route('/api/articles', name: 'CreateArticle', methods: ['POST'])]
-    public function create(
-        Request $request,
-        #[CurrentUser] User $user,
-        SluggerInterface $slugger,
-        ArticleService $articleService,
-    ) {
-        $payload = json_decode($request->getContent(), true)['article'] ?? throw new BadRequestHttpException('Missing article');
-        $title = $payload['title'] ?? throw new BadRequestHttpException('Missing title');
-        $tagList = $payload['tagList'] ?? [];
-
-        try {
-            $article = $articleService->create(
-                $slugger->slug($title),
-                $title,
-                $payload['description'] ?? throw new BadRequestHttpException('Missing description'),
-                $payload['body'] ?? throw new BadRequestHttpException('Missing body'),
-                $user->id,
-                ...$tagList
-            );
-        } catch (ArticleAlreadyExists $exception) {
-            throw new BadRequestHttpException($exception->getMessage(), $exception);
-        }
-
-        return new JsonResponse($this->view($article, $user, $user),  Response::HTTP_CREATED);
-    }
-
     #[Route('/api/articles/{slug}', name: 'GetArticle', methods: ['GET'])]
     public function get(
         string $slug,
