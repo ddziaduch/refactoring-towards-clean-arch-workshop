@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\ArticleMgmt\Domain\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\User;
+use Clean\Application\UseCase\CreateCommentUseCase;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,28 +26,25 @@ class CommentController
         string $slug,
         #[CurrentUser] User $user,
         Request $request,
-        EntityManagerInterface $entityManager,
+        CreateCommentUseCase $createCommentUseCase,
     ) {
-        $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
+        $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
 
-        if (!$article) {
+        try {
+            $commentEntity = $createCommentUseCase->create($slug, $comment['body'], $user);
+        } catch (RuntimeException) {
             throw new NotFoundHttpException('Article not found');
         }
-
-        $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
-        $commentEntity = new Comment($article, $user, $comment['body']);
-        $entityManager->persist($commentEntity);
-        $entityManager->flush();
 
         return new JsonResponse([
             'comment' => [
                 'author' => [
-                    'bio' => $commentEntity->author->bio,
-                    'following' => $user && $commentEntity->author->following->contains($user),
+                    'bio' => $user->bio,
+                    'following' => $user->following->contains($user),
                     'image' => $user->image,
                     'username' => $user->username,
                 ],
-                'body' => $commentEntity->body,
+                'body' => $comment['body'],
                 'createdAt' => $commentEntity->createdAt->format(DATE_ATOM),
                 'id' => $commentEntity->id(),
                 'updatedAt' => $commentEntity->updatedAt->format(DATE_ATOM),

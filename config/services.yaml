@@ -21,5 +21,8 @@ services:
             - '../src/ArticleMgmt/Domain/Entity'
             - '../src/Kernel.php'
 
+    Clean\:
+        resource: '../srcClean'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
