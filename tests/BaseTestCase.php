@@ -19,9 +19,6 @@ abstract class BaseTestCase extends WebTestCase
 
         $this->client = static::createClient();
 
-        $purger = new ORMPurger(
-            $this->client->getContainer()->get(EntityManagerInterface::class),
-        );
         $container = $this->client->getContainer();
         $em = $container->get(EntityManagerInterface::class);
         assert($em instanceof EntityManagerInterface);
