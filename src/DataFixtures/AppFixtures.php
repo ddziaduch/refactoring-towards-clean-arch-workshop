@@ -2,8 +2,10 @@
 
 namespace App\DataFixtures;
 
+use App\ArticleMgmt\Domain\Entity\Article;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -25,6 +27,16 @@ class AppFixtures extends Fixture
             );
             $user->password = $this->passwordHasher->hashPassword($user, $name);
             $manager->persist($user);
+
+            $article = new Article(
+                slug: sprintf('test-article-user-%s', $name),
+                title: 'Test Article Title',
+                description: 'Test Article Description',
+                body: 'Test Article Body',
+                tagList: new ArrayCollection([]),
+                author: $user,
+            );
+            $manager->persist($article);
         }
 
         $manager->flush();
