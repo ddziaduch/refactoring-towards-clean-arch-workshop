@@ -22,4 +22,26 @@ abstract class BaseTestCase extends WebTestCase
         );
         $purger->purge();
     }
+
+    public function login(): void
+    {
+        $this->client->disableReboot();
+
+        $this->client->jsonRequest(
+            method: 'POST',
+            uri: '/api/users',
+            parameters: [
+                'user' => [
+                    'username' => 'username',
+                    'password' => 'password',
+                    'email' => 'test@example.com',
+                ],
+            ],
+        );
+
+        self::assertResponseIsSuccessful();
+
+        $token = json_decode($this->client->getResponse()->getContent())->user->token;
+        $this->client->setServerParameters(['HTTP_Authorization' => 'Bearer ' . $token]);
+    }
 }
