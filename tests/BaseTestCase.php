@@ -2,10 +2,12 @@
 
 namespace App\Tests;
 
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\DataFixtures\AppFixtures;
 
 abstract class BaseTestCase extends WebTestCase
 {
@@ -20,7 +22,19 @@ abstract class BaseTestCase extends WebTestCase
         $purger = new ORMPurger(
             $this->client->getContainer()->get(EntityManagerInterface::class),
         );
+        $container = $this->client->getContainer();
+        $em = $container->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
+
+        // Purge database before each test
+        $purger = new ORMPurger($em);
         $purger->purge();
+
+        // Load fixtures after purge
+        $executor = new ORMExecutor($em);
+        $executor->execute([
+            $container->get(AppFixtures::class),
+        ], append: true);
     }
 
     public function login(): void
