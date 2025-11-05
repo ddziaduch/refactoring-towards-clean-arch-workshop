@@ -7,12 +7,15 @@ namespace Clean\Application\UseCase;
 use App\ArticleMgmt\Domain\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\User;
+use Clean\Application\Port\In\CreateCommentUseCaseInterface;
+use Clean\Application\Port\Out\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-final readonly class CreateCommentUseCase
+final readonly class CreateCommentUseCase implements CreateCommentUseCaseInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private CommentRepository $commentRepository,
     ) {
     }
 
@@ -27,11 +30,10 @@ final readonly class CreateCommentUseCase
             throw new \RuntimeException('Article not found');
         }
 
-        $commentEntity = new Comment($article, $user, $commentBody);
+        $comment = new Comment($article, $user, $commentBody);
 
-        $this->entityManager->persist($commentEntity);
-        $this->entityManager->flush();
+        $this->commentRepository->save($comment);
 
-        return $commentEntity;
+        return $comment;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\ArticleMgmt\Domain\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\User;
+use Clean\Application\Port\In\CreateCommentUseCaseInterface;
 use Clean\Application\UseCase\CreateCommentUseCase;
 use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
@@ -26,7 +27,7 @@ class CommentController
         string $slug,
         #[CurrentUser] User $user,
         Request $request,
-        CreateCommentUseCase $createCommentUseCase,
+        CreateCommentUseCaseInterface $createCommentUseCase,
     ) {
         $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
 
