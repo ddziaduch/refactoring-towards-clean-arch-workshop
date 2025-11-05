@@ -22,37 +22,6 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[AsController]
 class CommentController
 {
-    #[Route('/api/articles/{slug}/comments', name: 'CreateArticleComment', methods: ['POST'])]
-    public function createArticleComment(
-        string $slug,
-        #[CurrentUser] User $user,
-        Request $request,
-        CreateCommentUseCaseInterface $createCommentUseCase,
-    ) {
-        $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
-
-        try {
-            $commentEntity = $createCommentUseCase->create($slug, $comment['body'], $user);
-        } catch (RuntimeException) {
-            throw new NotFoundHttpException('Article not found');
-        }
-
-        return new JsonResponse([
-            'comment' => [
-                'author' => [
-                    'bio' => $user->bio,
-                    'following' => $user->following->contains($user),
-                    'image' => $user->image,
-                    'username' => $user->username,
-                ],
-                'body' => $comment['body'],
-                'createdAt' => $commentEntity->createdAt->format(DATE_ATOM),
-                'id' => $commentEntity->id(),
-                'updatedAt' => $commentEntity->updatedAt->format(DATE_ATOM),
-            ],
-        ]);
-    }
-
     #[Route('/api/articles/{slug}/comments', name: 'GetArticleComments', methods: ['GET'])]
     public function getArticleComments(
         string $slug,

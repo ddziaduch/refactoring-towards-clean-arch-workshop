@@ -10,5 +10,11 @@ articleMgmtControllers:
         namespace: App\ArticleMgmt\Presentation
     type: attribute
 
+cleanHttpAdapter:
+    resource:
+        path: ../srcClean/Adapter/In
+        namespace: Clean\Adapter\In
+    type: attribute
+
 Login:
     path: /api/users/login
