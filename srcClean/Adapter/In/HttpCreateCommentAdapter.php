@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Clean\Adapter\In;
 
+use App\ArticleMgmt\Domain\ArticleDoesNotExist;
 use App\Entity\User;
 use Clean\Application\Port\In\CreateCommentUseCaseInterface;
 use RuntimeException;
@@ -33,8 +34,12 @@ final readonly class HttpCreateCommentAdapter
         $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
 
         try {
-            $commentEntity = $this->createCommentUseCase->create($slug, $comment['body'], $user);
-        } catch (RuntimeException) {
+            $commentEntity = $this->createCommentUseCase->create(
+                $slug,
+                $comment['body'],
+                $user->id ?? throw new \LogicException('User ID should be known at this stage')
+            );
+        } catch (ArticleDoesNotExist) {
             throw new NotFoundHttpException('Article not found');
         }
 
