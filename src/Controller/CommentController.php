@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\ArticleMgmt\Domain\Entity\Article;
+use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\User;
 use Clean\Application\Port\In\CreateCommentUseCaseInterface;
