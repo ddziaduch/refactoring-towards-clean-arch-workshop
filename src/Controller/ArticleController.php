@@ -1,14 +1,12 @@
 <?php
 
-namespace App\ArticleMgmt\Presentation;
+namespace App\Controller;
 
-use App\ArticleMgmt\Domain\ArticleAlreadyExists;
-use App\ArticleMgmt\Application\ArticleReadModel;
-use App\ArticleMgmt\Application\ArticleService;
-use App\ArticleMgmt\Domain\ArticleDoesNotExist;
-use App\ArticleMgmt\Domain\Entity\Article;
+use App\Entity\Article;
 use App\Entity\Tag;
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,40 +82,45 @@ class ArticleController
     }
 
     #[Route('/api/articles', name: 'CreateArticle', methods: ['POST'])]
-    public function create(
+    public function createArticle(
         Request $request,
         #[CurrentUser] User $user,
         SluggerInterface $slugger,
-        ArticleService $articleService,
+        EntityManagerInterface $entityManager,
     ) {
-        $payload = json_decode($request->getContent(), true)['article'] ?? throw new BadRequestHttpException('Missing article');
         $title = $payload['title'] ?? throw new BadRequestHttpException('Missing title');
+        $slug = $slugger->slug($title);
+        $existingArticle = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
+
+        if ($existingArticle) {
+            throw new BadRequestHttpException('Article already exists');
+        }
+
+        $payload = json_decode($request->getContent(), true)['article'] ?? throw new BadRequestHttpException('Missing article');
         $tagList = $payload['tagList'] ?? [];
 
-        try {
-            $article = $articleService->create(
-                $slugger->slug($title),
-                $title,
-                $payload['description'] ?? throw new BadRequestHttpException('Missing description'),
-                $payload['body'] ?? throw new BadRequestHttpException('Missing body'),
-                $user->id,
-                ...$tagList
-            );
-        } catch (ArticleAlreadyExists $exception) {
-            throw new BadRequestHttpException($exception->getMessage(), $exception);
-        }
+        $article = new Article(
+            $slug,
+            $title,
+            $payload['description'] ?? throw new BadRequestHttpException('Missing description'),
+            $payload['body'] ?? throw new BadRequestHttpException('Missing body'),
+            $this->findOrCreateTags($entityManager, ...$tagList),
+            $user,
+        );
+
+        $entityManager->persist($article);
+        $entityManager->flush();
 
         return new JsonResponse($this->view($article, $user, $user));
     }
 
     #[Route('/api/articles/{slug}', name: 'GetArticle', methods: ['GET'])]
-    public function get(
+    public function getArticle(
         string $slug,
         #[CurrentUser] ?User $user,
-        ArticleService $articleService,
         EntityManagerInterface $entityManager,
     ): Response {
-        $article = $articleService->getBySlug($slug);
+        $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
 
         if (!$article) {
             return new JsonResponse('Article not found', 422);
@@ -132,13 +135,19 @@ class ArticleController
     public function delete(
         string $slug,
         #[CurrentUser] User $user,
-        ArticleService $articleService,
+        EntityManagerInterface $entityManager,
     ): Response {
-        try {
-            $articleService->delete($slug, $user->id);
-        } catch (ArticleDoesNotExist) {
+        $article = $entityManager->getRepository(Article::class)->findOneBy([
+            'slug' => $slug,
+            'author' => $user,
+        ]);
+
+        if (!$article) {
             return new JsonResponse('Article not found', 422);
         }
+
+        $entityManager->remove($article);
+        $entityManager->flush();
 
         return new Response();
     }
@@ -148,15 +157,17 @@ class ArticleController
         string $slug,
         #[CurrentUser] User $user,
         EntityManagerInterface $entityManager,
-        ArticleService $articleService,
     ): Response {
-        try {
-            $articleService->favorite($slug, $user->id);
-        } catch (ArticleDoesNotExist) {
+        $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
+
+        if (!$article) {
             return new JsonResponse('Article not found', 422);
         }
 
-        $article = $articleService->getBySlug($slug);
+        if (!$article->favoritedBy->contains($user)) {
+            $article->favoritedBy->add($user);
+        }
+
         $author = $entityManager->find(User::class, $article->authorId);
 
         return new JsonResponse($this->view($article, $user, $author));
@@ -168,7 +179,6 @@ class ArticleController
         #[CurrentUser] User $user,
         EntityManagerInterface $entityManager,
     ): Response {
-        // todo: move to service
         $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
 
         if (!$article) {
@@ -186,7 +196,7 @@ class ArticleController
     }
 
     public function view(
-        Article | ArticleReadModel $article,
+        Article $article,
         ?User $currentUser,
         User $author,
     ): array {
@@ -202,15 +212,11 @@ class ArticleController
                 'createdAt' => $article->createdAt->format(DATE_ATOM),
                 'description' => $article->description,
                 'favorited' => $currentUser && $currentUser->favorites->contains($article),
-                'favoritesCount' => $article instanceof ArticleReadModel
-                    ? $article->favoritesCount
-                    : $article->favoritedBy->count(),
+                'favoritesCount' => $article->favoritedBy->count(),
                 'slug' => $article->slug,
-                'tagList' => $article instanceof ArticleReadModel
-                    ? $article->tags
-                    : $article->tagList->map(
-                        static fn (Tag $tag): string => $tag->value,
-                    ),
+                'tagList' => $article->tagList->map(
+                    static fn (Tag $tag): string => $tag->value,
+                ),
                 'title' => $article->title,
                 'updatedAt' => $article->updatedAt->format(DATE_ATOM),
             ],
@@ -253,5 +259,25 @@ class ArticleController
         }
 
         return $queryBuilder->getQuery()->execute();
+    }
+
+    public function findOrCreateTags(EntityManagerInterface $entityManager, string ...$values): Collection
+    {
+        $collection = new ArrayCollection();
+
+        foreach ($values as $value) {
+            $tag = $entityManager->getRepository(Tag::class)->findOneBy(['value' => $value]);
+
+            if ($tag === null) {
+                $tag = new Tag($value);
+                $entityManager->persist($tag);
+            }
+
+            $collection->add($tag);
+        }
+
+        $entityManager->flush();
+
+        return $collection;
     }
 }

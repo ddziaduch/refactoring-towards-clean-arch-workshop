@@ -1,10 +1,7 @@
 <?php
 
-namespace App\ArticleMgmt\Domain\Entity;
+namespace App\Entity;
 
-use App\Entity\Comment;
-use App\Entity\Tag;
-use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

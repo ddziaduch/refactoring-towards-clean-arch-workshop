@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\ArticleMgmt\Domain\Entity\Article;
+use App\Entity\Article;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Collections\ArrayCollection;
