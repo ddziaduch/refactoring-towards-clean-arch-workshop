@@ -6,12 +6,12 @@ namespace Clean\Adapter\In;
 
 use App\Entity\Comment;
 use App\Entity\User;
+use Clean\Adapter\In\Dto\CreateCommentRequestDto;
 use Clean\Application\Port\In\CreateCommentUseCaseInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -29,14 +29,13 @@ final readonly class HttpCreateCommentAdapter
     public function __invoke(
         string $slug,
         #[CurrentUser] User $user,
-        Request $request,
+        #[MapRequestPayload(validationFailedStatusCode: 400)] CreateCommentRequestDto $payload,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        $commentPayload = json_decode($request->getContent(), associative: true, flags: JSON_THROW_ON_ERROR)['comment']
-            ?? throw new BadRequestHttpException('Comment is missing');
-
-        $commentBody = $commentPayload['body']
-            ?? throw new BadRequestHttpException('Comment body is missing');
+        $commentBody = $payload->comment?->body;
+        if (!$commentBody) {
+            throw new \LogicException('Comment body should be known at this stage');
+        }
 
         $userId = $user->id
             ?? throw new \LogicException('User ID should be known at this stage');
