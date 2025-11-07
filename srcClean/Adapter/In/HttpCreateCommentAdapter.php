@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Clean\Adapter\In;
 
-use App\ArticleMgmt\Domain\ArticleDoesNotExist;
+use App\Entity\Comment;
 use App\Entity\User;
 use Clean\Application\Port\In\CreateCommentUseCaseInterface;
-use RuntimeException;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -30,18 +30,27 @@ final readonly class HttpCreateCommentAdapter
         string $slug,
         #[CurrentUser] User $user,
         Request $request,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
-        $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
+        $commentPayload = json_decode($request->getContent(), associative: true, flags: JSON_THROW_ON_ERROR)['comment']
+            ?? throw new BadRequestHttpException('Comment is missing');
+
+        $commentBody = $commentPayload['body']
+            ?? throw new BadRequestHttpException('Comment body is missing');
+
+        $userId = $user->id
+            ?? throw new \LogicException('User ID should be known at this stage');
 
         try {
-            $commentEntity = $this->createCommentUseCase->create(
-                $slug,
-                $comment['body'],
-                $user->id ?? throw new \LogicException('User ID should be known at this stage')
-            );
-        } catch (ArticleDoesNotExist) {
+            $commentId = $this->createCommentUseCase->create($slug, $commentBody, $userId);
+        } catch (\RuntimeException) {
             throw new NotFoundHttpException('Article not found');
         }
+
+        $commentEntity = $entityManager->find(Comment::class, $commentId)
+            ?? throw new \LogicException('Comment should exist on this stage');
+
+        // todo: pull read model
 
         return new JsonResponse([
             'comment' => [
@@ -51,7 +60,7 @@ final readonly class HttpCreateCommentAdapter
                     'image' => $user->image,
                     'username' => $user->username,
                 ],
-                'body' => $comment['body'],
+                'body' => $commentBody,
                 'createdAt' => $commentEntity->createdAt->format(DATE_ATOM),
                 'id' => $commentEntity->id(),
                 'updatedAt' => $commentEntity->updatedAt->format(DATE_ATOM),
