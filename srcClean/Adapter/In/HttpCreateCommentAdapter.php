@@ -7,6 +7,7 @@ namespace Clean\Adapter\In;
 use App\Entity\Comment;
 use App\Entity\User;
 use Clean\Adapter\In\Dto\CreateCommentRequestDto;
+use Clean\Application\Exception\ArticleNotFound;
 use Clean\Application\Port\In\CreateCommentUseCaseInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -42,8 +43,8 @@ final readonly class HttpCreateCommentAdapter
 
         try {
             $commentId = $this->createCommentUseCase->create($slug, $commentBody, $userId);
-        } catch (\RuntimeException) {
-            throw new NotFoundHttpException('Article not found');
+        } catch (ArticleNotFound $exception) {
+            throw new NotFoundHttpException($exception->getMessage(), $exception);
         }
 
         $commentEntity = $entityManager->find(Comment::class, $commentId)

@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Clean\Application\Port\In;
 
-use App\Entity\Comment;
+use Clean\Application\Exception\ArticleNotFound;
 
 interface CreateCommentUseCaseInterface
 {
     /**
-     * @throws \RuntimeException
+     * @throws ArticleNotFound
      */
     public function create(string $articleSlug, string $commentBody, int $userId): int;
 }

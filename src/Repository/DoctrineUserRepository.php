@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use Clean\Application\Exception\UserNotFound;
+use Clean\Application\Port\Out\UserRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -12,7 +14,7 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 /**
  * @extends ServiceEntityRepository<User>
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class DoctrineUserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -31,5 +33,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->password = $newHashedPassword;
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    public function getById(int $userId): User
+    {
+        return $this->find($userId) ?? throw UserNotFound::withId($userId);
     }
 }
