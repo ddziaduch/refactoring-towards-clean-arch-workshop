@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Clean\Adapter\In;
 
-use App\Entity\Comment;
+use Clean\Application\Port\Out\CommentReadModel;
+use Clean\Domain\Entity\Comment;
 use App\Entity\User;
 use Clean\Adapter\In\Dto\CreateCommentRequestDto;
 use Clean\Application\Exception\ArticleNotFound;
@@ -22,8 +23,8 @@ final readonly class HttpCreateCommentAdapter
 {
     public function __construct(
         private CreateCommentUseCaseInterface $createCommentUseCase,
-    )
-    {
+        private CommentReadModel $commentReadModel,
+    ) {
     }
 
     #[Route('/api/articles/{slug}/comments', name: 'CreateArticleComment', methods: ['POST'])]
@@ -47,10 +48,8 @@ final readonly class HttpCreateCommentAdapter
             throw new NotFoundHttpException($exception->getMessage(), $exception);
         }
 
-        $commentEntity = $entityManager->find(Comment::class, $commentId)
-            ?? throw new \LogicException('Comment should exist on this stage');
-
-        // todo: pull read model
+        $dto = $this->commentReadModel->get($commentId)
+            ?? throw new \LogicException('Comment DTO should be known at this stage');
 
         return new JsonResponse([
             'comment' => [
@@ -60,10 +59,10 @@ final readonly class HttpCreateCommentAdapter
                     'image' => $user->image,
                     'username' => $user->username,
                 ],
-                'body' => $commentBody,
-                'createdAt' => $commentEntity->createdAt->format(DATE_ATOM),
-                'id' => $commentEntity->id(),
-                'updatedAt' => $commentEntity->updatedAt->format(DATE_ATOM),
+                'body' => $dto->body,
+                'createdAt' => $dto->createdAt->format(DATE_ATOM),
+                'id' => $dto->id,
+                'updatedAt' => $dto->updatedAt->format(DATE_ATOM),
             ],
         ]);
     }

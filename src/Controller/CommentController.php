@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
-use App\Entity\Comment;
+use Clean\Domain\Entity\Comment;
 use App\Entity\User;
 use Clean\Application\Port\In\CreateCommentUseCaseInterface;
 use Clean\Application\UseCase\CreateCommentUseCase;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Clean\Application\UseCase;
 
-use App\Entity\Comment;
+use Clean\Domain\Entity\Comment;
 use Clean\Application\Port\In\CreateCommentUseCaseInterface;
 use Clean\Application\Port\Out\ArticleRepository;
 use Clean\Application\Port\Out\CommentRepository;

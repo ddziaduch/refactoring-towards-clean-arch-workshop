@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Clean\Application\Port\Out;
 
-use App\Entity\Comment;
+use Clean\Domain\Entity\Comment;
 
 interface CommentRepository
 {
     public function save(Comment $comment): void;
+
+    public function getById(int $commentId): Comment;
 }
