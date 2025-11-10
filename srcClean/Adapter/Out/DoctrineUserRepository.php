@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace Clean\Adapter\Out;
 
 use App\Entity\User;
 use Clean\Application\Exception\UserNotFound;

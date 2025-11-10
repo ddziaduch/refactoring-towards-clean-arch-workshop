@@ -114,7 +114,7 @@
             "config/services.yaml",
             "public/index.php",
             "src/Controller/.gitignore",
-            "src/Kernel.php"
+            "srcClean/Framework/Kernel.php"
         ]
     },
     "symfony/maker-bundle": {
