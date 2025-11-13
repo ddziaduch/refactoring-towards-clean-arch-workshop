@@ -4,7 +4,7 @@
 1. Install locally Docker Desktop/Rancher Desktop.
 2. Clone the repository
 3. Open the repository folder in your terminal
-4. Run the command: `docker compose —-build`
+4. Run the command: `docker compose up`
 5. Wait till it pulls & builds all the images
 6. Run `docker compose run vendor/bin/phpunit` to verify whether all works as expected
 
