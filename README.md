@@ -6,7 +6,7 @@
 3. Open the repository folder in your terminal
 4. Run the command: `docker compose up`
 5. Wait till it pulls & builds all the images
-6. Run `docker compose run vendor/bin/phpunit` to verify whether all works as expected
+6. Run `docker compose exec app vendor/bin/phpunit` to verify whether all works as expected
 
 ## Host installation without containers:
 1. Install PHP 8.3
