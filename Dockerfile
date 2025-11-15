@@ -1,7 +1,7 @@
 FROM php:8.3-cli
 
 # install required system packages
-RUN apt-get update && apt-get install -y libpq-dev
+RUN apt-get update && apt-get install -y libpq-dev git
 RUN docker-php-ext-install pdo pdo_pgsql
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
