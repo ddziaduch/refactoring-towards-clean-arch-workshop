@@ -3,18 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Article;
-use Clean\Application\Exception\CommentDoesNotBelongToArticle;
-use Clean\Application\Exception\CommentDoesNotBelongToUser;
-use Clean\Application\Exception\CommentNotFound;
-use Clean\Application\Port\In\DeleteCommentUseCaseInterface;
 use Clean\Domain\Entity\Comment;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
@@ -49,21 +42,5 @@ class CommentController
         ]);
     }
 
-    #[Route('/api/articles/{slug}/comments/{id}', name: 'DeleteArticleComment', methods: ['DELETE'])]
-    public function deleteArticleComment(
-        string $slug,
-        int $id,
-        #[CurrentUser] User $user,
-        DeleteCommentUseCaseInterface $deleteCommentUseCase,
-    ): Response {
-        try {
-            $deleteCommentUseCase->delete($slug, $id, $user->id);
-        } catch (CommentNotFound $exception) {
-            throw new NotFoundHttpException($exception->getMessage(), $exception);
-        } catch (CommentDoesNotBelongToArticle | CommentDoesNotBelongToUser $exception) {
-            throw new AccessDeniedHttpException($exception->getMessage(), $exception);
-        }
-
-        return new Response();
-    }
+    
 }
