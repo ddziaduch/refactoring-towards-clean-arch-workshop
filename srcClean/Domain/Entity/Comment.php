@@ -16,7 +16,9 @@ class Comment
     #[ORM\Column]
     public readonly \DateTimeImmutable $createdAt;
     #[ORM\Column]
-    public readonly \DateTimeImmutable $updatedAt;
+    public \DateTimeImmutable $updatedAt;
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
 
     public function __construct(
         #[ORM\ManyToOne(targetEntity: Article::class)]
@@ -34,5 +36,21 @@ class Comment
     public function id(): ?int
     {
         return $this->id;
+    }
+
+    public function markAsDeleted(\DateTimeImmutable $now): void
+    {
+        $this->updatedAt = $now;
+        $this->deletedAt = $now;
+    }
+
+    public function updatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function isDeleted(): bool
+    {
+        return null !== $this->deletedAt;
     }
 }

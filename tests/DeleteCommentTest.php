@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Clean\Application\Port\Out\CommentRepository;
 use PHPUnit\Framework\Attributes\Test;
 
 final class DeleteCommentTest extends BaseTestCase
@@ -25,6 +26,10 @@ final class DeleteCommentTest extends BaseTestCase
         );
 
         self::assertResponseIsSuccessful();
+
+        $commentRepository = self::getContainer()->get(CommentRepository::class);
+        assert($commentRepository instanceof CommentRepository);
+        self::assertTrue($commentRepository->getById($commentId)->isDeleted());
     }
 
     #[Test]

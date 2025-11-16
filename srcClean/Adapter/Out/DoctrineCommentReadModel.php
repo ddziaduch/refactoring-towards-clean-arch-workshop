@@ -24,7 +24,7 @@ final readonly class DoctrineCommentReadModel implements CommentReadModel
             $comment->id(),
             $comment->body,
             $comment->createdAt,
-            $comment->updatedAt,
+            $comment->updatedAt(),
         );
     }
 }

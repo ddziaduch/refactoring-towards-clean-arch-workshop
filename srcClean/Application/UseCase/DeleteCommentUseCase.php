@@ -9,11 +9,13 @@ use Clean\Application\Exception\CommentDoesNotBelongToUser;
 use Clean\Application\Exception\CommentNotFound;
 use Clean\Application\Port\In\DeleteCommentUseCaseInterface;
 use Clean\Application\Port\Out\CommentRepository;
+use Psr\Clock\ClockInterface;
 
 final readonly class DeleteCommentUseCase implements DeleteCommentUseCaseInterface
 {
     public function __construct(
         private CommentRepository $commentRepository,
+        private ClockInterface $clock,
     ) {
     }
 
@@ -37,6 +39,8 @@ final readonly class DeleteCommentUseCase implements DeleteCommentUseCaseInterfa
             throw CommentDoesNotBelongToArticle::withCommentIdAndArticleSlug($commentId, $articleSlug);
         }
 
-        $this->commentRepository->delete($comment);
+        $comment->markAsDeleted($this->clock->now());
+
+        $this->commentRepository->save($comment);
     }
 }

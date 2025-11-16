@@ -42,7 +42,7 @@ class CommentController
                         'body' => $comment->body,
                         'createdAt' => $comment->createdAt->format(DATE_ATOM),
                         'id' => $comment->id(),
-                        'updatedAt' => $comment->updatedAt->format(DATE_ATOM),
+                        'updatedAt' => $comment->updatedAt()->format(DATE_ATOM),
                     ];
                 },
             )->toArray(),
