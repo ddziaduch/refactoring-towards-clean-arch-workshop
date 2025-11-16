@@ -34,18 +34,25 @@ abstract class BaseTestCase extends WebTestCase
         ], append: true);
     }
 
-    public function login(): void
+    public function login(
+        string $username = 'username',
+        string $email = 'test@example.com',
+        string $password = 'password',
+    ): void
     {
         $this->client->disableReboot();
+
+        // reset headers to avoid sending a previous token when switching users
+        $this->client->setServerParameters([]);
 
         $this->client->jsonRequest(
             method: 'POST',
             uri: '/api/users',
             parameters: [
                 'user' => [
-                    'username' => 'username',
-                    'password' => 'password',
-                    'email' => 'test@example.com',
+                    'username' => $username,
+                    'password' => $password,
+                    'email' => $email,
                 ],
             ],
         );

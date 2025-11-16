@@ -27,4 +27,10 @@ final readonly class DoctrineCommentRepository implements CommentRepository
         return $this->entityManager->find(Comment::class, $commentId)
             ?? throw CommentNotFound::withId($commentId);
     }
+
+    public function delete(Comment $comment): void
+    {
+        $this->entityManager->remove($comment);
+        $this->entityManager->flush();
+    }
 }

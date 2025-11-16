@@ -3,6 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use Clean\Application\Exception\CommentDoesNotBelongToArticle;
+use Clean\Application\Exception\CommentDoesNotBelongToUser;
+use Clean\Application\Exception\CommentNotFound;
+use Clean\Application\Port\In\DeleteCommentUseCaseInterface;
 use Clean\Domain\Entity\Comment;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -50,20 +54,15 @@ class CommentController
         string $slug,
         int $id,
         #[CurrentUser] User $user,
-        EntityManagerInterface $entityManager,
+        DeleteCommentUseCaseInterface $deleteCommentUseCase,
     ): Response {
-        $comment = $entityManager->find(Comment::class, $id);
-
-        if (!$comment || $comment->article->slug !== $slug) {
-            throw new NotFoundHttpException('Comment not found');
+        try {
+            $deleteCommentUseCase->delete($slug, $id, $user->id);
+        } catch (CommentNotFound $exception) {
+            throw new NotFoundHttpException($exception->getMessage(), $exception);
+        } catch (CommentDoesNotBelongToArticle | CommentDoesNotBelongToUser $exception) {
+            throw new AccessDeniedHttpException($exception->getMessage(), $exception);
         }
-
-        if ($comment->author !== $user) {
-            throw new AccessDeniedHttpException('You are not allowed to delete this comment');
-        }
-
-        $entityManager->remove($comment);
-        $entityManager->flush();
 
         return new Response();
     }
