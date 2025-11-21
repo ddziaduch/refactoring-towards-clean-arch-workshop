@@ -25,3 +25,5 @@ services:
 
     Clean\:
       resource: '../srcClean'
+      exclude:
+        - '../srcClean/Domain/Entity/'

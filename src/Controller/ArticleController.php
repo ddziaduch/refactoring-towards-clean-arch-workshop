@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
-use App\Entity\Tag;
+use Clean\Domain\Entity\Article;
+use Clean\Domain\Entity\Tag;
 use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

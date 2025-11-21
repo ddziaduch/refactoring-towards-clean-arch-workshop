@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
-use App\Entity\Comment;
+use Clean\Domain\Entity\Article;
+use Clean\Domain\Entity\Comment;
 use App\Entity\User;
 use Clean\Application\UseCase\CreateCommentUseCase;
 use Doctrine\ORM\EntityManagerInterface;

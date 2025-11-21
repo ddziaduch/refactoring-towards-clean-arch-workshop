@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Clean\Adapter\Out;
 
-use App\Entity\Comment;
+use Clean\Domain\Entity\Comment;
 use Clean\Application\Port\Out\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
