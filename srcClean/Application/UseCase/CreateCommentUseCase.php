@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Clean\Application\UseCase;
 
-use Clean\Application\Exception\ArticleNotFound;
-use Clean\Application\Exception\UserNotFound;
+use Clean\Application\Port\In\CreateCommentUseCaseInterface;
 use Clean\Application\Port\Out\ArticleRepository;
 use Clean\Application\Port\Out\UserRepository;
 use Clean\Domain\Entity\Comment;
 use Clean\Application\Port\Out\CommentRepository;
 
-final readonly class CreateCommentUseCase
+final readonly class CreateCommentUseCase implements CreateCommentUseCaseInterface
 {
 
     public function __construct(
@@ -21,10 +20,6 @@ final readonly class CreateCommentUseCase
     ) {
     }
 
-    /**
-     * @throws ArticleNotFound
-     * @throws UserNotFound
-     */
     public function create(
         string $articleSlug,
         string $commentBody,
