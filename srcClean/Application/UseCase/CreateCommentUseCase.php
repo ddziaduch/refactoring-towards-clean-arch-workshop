@@ -4,30 +4,34 @@ declare(strict_types=1);
 
 namespace Clean\Application\UseCase;
 
-use Clean\Domain\Entity\Article;
+use Clean\Application\Exception\ArticleNotFound;
+use Clean\Application\Exception\UserNotFound;
+use Clean\Application\Port\Out\ArticleRepository;
+use Clean\Application\Port\Out\UserRepository;
 use Clean\Domain\Entity\Comment;
-use App\Entity\User;
 use Clean\Application\Port\Out\CommentRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class CreateCommentUseCase
 {
+
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private ArticleRepository $articleRepository,
         private CommentRepository $commentRepository,
+        private UserRepository $userRepository,
     ) {
     }
 
+    /**
+     * @throws ArticleNotFound
+     * @throws UserNotFound
+     */
     public function create(
         string $articleSlug,
         string $commentBody,
-        User $user,
+        int $userId,
     ): Comment {
-        $article = $this->entityManager->getRepository(Article::class)->findOneBy(['slug' => $articleSlug]);
-
-        if (!$article) {
-            throw new \RuntimeException('Article not found');
-        }
+        $article = $this->articleRepository->getBySlug($articleSlug);
+        $user = $this->userRepository->getById($userId);
 
         $comment = new Comment($article, $user, $commentBody);
 

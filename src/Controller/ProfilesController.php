@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
+use Clean\Adapter\Out\DoctrineUserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +18,7 @@ class ProfilesController extends AbstractController
     #[Route('/api/profiles/{username}', name: 'GetProfileByUsername', methods: ['GET'])]
     public function get(
         string $username,
-        UserRepository $userRepository,
+        DoctrineUserRepository $userRepository,
         #[CurrentUser] ?User $currentUser,
     ): JsonResponse {
         $user = $userRepository->findOneBy(['username' => $username]);
@@ -36,7 +36,7 @@ class ProfilesController extends AbstractController
     #[Route('/api/profiles/{username}/follow', name: 'FollowUserByUsername', methods: ['POST'])]
     public function follow(
         string $username,
-        UserRepository $userRepository,
+        DoctrineUserRepository $userRepository,
         #[CurrentUser] User $currentUser,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
@@ -65,7 +65,7 @@ class ProfilesController extends AbstractController
     #[Route('/api/profiles/{username}/follow', name: 'UnfollowUserByUsername', methods: ['DELETE'])]
     public function unfollow(
         string $username,
-        UserRepository $userRepository,
+        DoctrineUserRepository $userRepository,
         #[CurrentUser] User $currentUser,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
