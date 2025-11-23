@@ -23,7 +23,7 @@ final readonly class CreateCommentUseCase implements CreateCommentUseCaseInterfa
         string $articleSlug,
         string $commentBody,
         int $userId,
-    ): Comment {
+    ): int {
         $article = $this->articleRepository->getBySlug($articleSlug);
         $user = $this->userRepository->getById($userId);
 
@@ -31,6 +31,6 @@ final readonly class CreateCommentUseCase implements CreateCommentUseCaseInterfa
 
         $this->commentRepository->save($comment);
 
-        return $comment;
+        return $comment->id();
     }
 }

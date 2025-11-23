@@ -5,7 +5,6 @@ namespace Clean\Application\Port\In;
 
 use Clean\Application\Exception\ArticleNotFound;
 use Clean\Application\Exception\UserNotFound;
-use Clean\Domain\Entity\Comment;
 
 interface CreateCommentUseCaseInterface
 {
@@ -13,5 +12,5 @@ interface CreateCommentUseCaseInterface
      * @throws ArticleNotFound
      * @throws UserNotFound
      */
-    public function create(string $articleSlug, string $commentBody, int $userId): Comment;
+    public function create(string $articleSlug, string $commentBody, int $userId): int;
 }

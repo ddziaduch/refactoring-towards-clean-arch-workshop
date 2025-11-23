@@ -29,7 +29,7 @@ class CreateCommentController
         $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
 
         try {
-            $commentEntity = $createCommentUseCase->create($slug, $comment['body'], $user->id);
+            $commentId = $createCommentUseCase->create($slug, $comment['body'], $user->id);
         } catch (ArticleNotFound) {
             throw new NotFoundHttpException('Article not found');
         } catch (UserNotFound $exception) {
@@ -40,7 +40,7 @@ class CreateCommentController
             );
         }
 
-        $commentReadModel = $commentReadModelLocator->get($commentEntity->id());
+        $commentReadModel = $commentReadModelLocator->get($commentId);
 
         return new JsonResponse([
             'comment' => [
