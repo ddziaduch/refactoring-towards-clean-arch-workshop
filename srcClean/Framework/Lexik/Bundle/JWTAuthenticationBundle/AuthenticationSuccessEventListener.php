@@ -1,6 +1,6 @@
 <?php
 
-namespace App\EventListeners;
+namespace Clean\Framework\Lexik\Bundle\JWTAuthenticationBundle;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;

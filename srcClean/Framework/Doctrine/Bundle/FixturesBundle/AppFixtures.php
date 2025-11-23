@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataFixtures;
+namespace Clean\Framework\Doctrine\Bundle\FixturesBundle;
 
 use Clean\Domain\Entity\Article;
 use App\Entity\User;

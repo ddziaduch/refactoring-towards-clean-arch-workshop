@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\DataFixtures\AppFixtures;
+use Clean\Framework\Doctrine\Bundle\FixturesBundle\AppFixtures;
 
 abstract class BaseTestCase extends WebTestCase
 {
