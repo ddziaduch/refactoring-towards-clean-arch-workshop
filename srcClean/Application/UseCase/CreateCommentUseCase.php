@@ -12,6 +12,7 @@ use Clean\Application\Port\Out\CommentRepository;
 
 final readonly class CreateCommentUseCase implements CreateCommentUseCaseInterface
 {
+
     public function __construct(
         private ArticleRepository $articleRepository,
         private CommentRepository $commentRepository,

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Clean\Adapter\Out;
 
-use Clean\Application\Exception\CommentNotFound;
 use Clean\Domain\Entity\Comment;
 use Clean\Application\Port\Out\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,11 +19,5 @@ final readonly class DoctrineCommentRepository implements CommentRepository
     {
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
-    }
-
-    public function getById(int $commentId): Comment
-    {
-        return $this->entityManager->find(Comment::class, $commentId)
-            ?? throw new CommentNotFound();
     }
 }
