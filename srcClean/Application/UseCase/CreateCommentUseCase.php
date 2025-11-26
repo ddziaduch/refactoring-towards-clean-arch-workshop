@@ -6,12 +6,13 @@ namespace Clean\Application\UseCase;
 
 use App\Entity\User;
 use Clean\Application\Exception\EntityNotFoundException;
+use Clean\Application\Port\Primary\CreateCommentUseCaseInterface;
 use Clean\Application\Port\Secondary\CommentRepositoryInterface;
 use Clean\Application\Port\Secondary\UuidGeneratorInterface;
 use Clean\Domain\Entity\Comment;
 use Clean\Application\Port\Secondary\ArticleRepositoryInterface;
 
-final class CreateCommentUseCase
+final class CreateCommentUseCase implements CreateCommentUseCaseInterface
 {
     public function __construct(
         private CommentRepositoryInterface $commentRepository,
