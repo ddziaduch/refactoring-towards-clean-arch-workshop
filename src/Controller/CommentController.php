@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\User;
+use Clean\Application\Exception\EntityNotFoundException;
 use Clean\Application\UseCase\CreateCommentUseCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,9 +36,8 @@ class CommentController
                 $slug,
                 $user,
                 $comment['body'],
-                $entityManager,
             );
-        } catch (\RuntimeException $exception) {
+        } catch (EntityNotFoundException $exception) {
             throw new NotFoundHttpException(
                 'Article not found',
                 $exception
