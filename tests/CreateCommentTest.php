@@ -25,4 +25,22 @@ final class CreateCommentTest extends BaseTestCase
 
         self::assertResponseStatusCodeSame(200);
     }
+
+    #[Test]
+    public function articleDoesNotExist()
+    {
+        $this->login();
+
+        $this->client->jsonRequest(
+            method: 'POST',
+            uri: sprintf('/api/articles/%s/comments', 'invalid-slug'),
+            parameters: [
+                'comment' => [
+                    'body' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                ],
+            ]
+        );
+
+        self::assertResponseStatusCodeSame(404);
+    }
 }

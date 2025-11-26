@@ -26,11 +26,9 @@ abstract class BaseTestCase extends WebTestCase
         assert($em instanceof EntityManagerInterface);
 
         $comments = $em->getRepository(Comment::class)->findAll();
-        foreach ($comments as $comments) {
-            $em->remove($comments);
+        foreach ($comments as $comment) {
+            $em->remove($comment);
         }
-
-        $em->flush();
 
         $articles = $em->getRepository(Article::class)->findAll();
         foreach ($articles as $article) {
