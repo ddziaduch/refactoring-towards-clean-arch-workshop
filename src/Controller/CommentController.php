@@ -44,19 +44,20 @@ class CommentController
             );
         }
 
+        $doctrineComment = $entityManager->find(Comment::class, $commentEntity->getId());
 
         return new JsonResponse([
             'comment' => [
                 'author' => [
-                    'bio' => $commentEntity->author->bio,
-                    'following' => $user && $commentEntity->author->following->contains($user),
+                    'bio' => $doctrineComment->author->bio,
+                    'following' => $user && $doctrineComment->author->following->contains($user),
                     'image' => $user->image,
                     'username' => $user->username,
                 ],
-                'body' => $commentEntity->body,
-                'createdAt' => $commentEntity->createdAt->format(DATE_ATOM),
-                'id' => $commentEntity->id(),
-                'updatedAt' => $commentEntity->updatedAt->format(DATE_ATOM),
+                'body' => $doctrineComment->body,
+                'createdAt' => $doctrineComment->createdAt->format(DATE_ATOM),
+                'id' => $doctrineComment->id(),
+                'updatedAt' => $doctrineComment->updatedAt->format(DATE_ATOM),
             ],
         ]);
     }
