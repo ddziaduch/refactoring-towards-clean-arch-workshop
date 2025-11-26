@@ -12,6 +12,8 @@ final class Comment
         private int $articleId,
         private int $authorId,
         private string $body,
+        private \DateTimeImmutable $createdAt,
+        private \DateTimeImmutable $updatedAt,
     ) {
     }
 
@@ -33,5 +35,15 @@ final class Comment
     public function getUuid(): string
     {
         return $this->id;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 }

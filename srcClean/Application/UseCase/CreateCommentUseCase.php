@@ -9,8 +9,10 @@ use Clean\Application\Exception\EntityNotFoundException;
 use Clean\Application\Port\Primary\CreateCommentUseCaseInterface;
 use Clean\Application\Port\Secondary\CommentRepositoryInterface;
 use Clean\Application\Port\Secondary\UuidGeneratorInterface;
+use Clean\Application\ReadModel\CommentReadModel;
 use Clean\Domain\Entity\Comment;
 use Clean\Application\Port\Secondary\ArticleRepositoryInterface;
+use Psr\Clock\ClockInterface;
 
 final class CreateCommentUseCase implements CreateCommentUseCaseInterface
 {
@@ -18,6 +20,7 @@ final class CreateCommentUseCase implements CreateCommentUseCaseInterface
         private CommentRepositoryInterface $commentRepository,
         private UuidGeneratorInterface $uuidGenerator,
         private ArticleRepositoryInterface $articleRepository,
+        private ClockInterface $clock,
     ) {
     }
 
@@ -26,15 +29,24 @@ final class CreateCommentUseCase implements CreateCommentUseCaseInterface
      */
     public function createArticleComment(
         string $articleSlug,
-        User $user,
+        int $authorId,
         string $commentBody,
-    ): Comment {
+    ): CommentReadModel {
+        $now = $this->clock->now();
         $article = $this->articleRepository->getBySlug($articleSlug);
-
         $uuid = $this->uuidGenerator->generate();
-        $commentEntity = new Comment($uuid, $article->getId(), $user->id, $commentBody);
+
+        $commentEntity = new Comment(
+            $uuid,
+            $article->getId(),
+            $authorId,
+            $commentBody,
+            $now,
+            $now,
+        );
+
         $this->commentRepository->store($commentEntity);
 
-        return $commentEntity;
+        return CommentReadModel::fromDomainEntity($commentEntity);
     }
 }
