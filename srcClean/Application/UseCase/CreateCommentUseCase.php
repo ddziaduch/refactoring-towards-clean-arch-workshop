@@ -7,6 +7,7 @@ namespace Clean\Application\UseCase;
 use App\Entity\Article;
 use App\Entity\User;
 use Clean\Application\Port\Secondary\CommentRepositoryInterface;
+use Clean\Application\Port\Secondary\UuidGeneratorInterface;
 use Clean\Domain\Entity\Comment;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -14,6 +15,7 @@ final class CreateCommentUseCase
 {
     public function __construct(
         private CommentRepositoryInterface $commentRepository,
+        private UuidGeneratorInterface $uuidGenerator,
     ) {
     }
 
@@ -32,7 +34,8 @@ final class CreateCommentUseCase
             throw new \RuntimeException('Article not found');
         }
 
-        $commentEntity = new Comment($article->id, $user->id, $commentBody);
+        $uuid = $this->uuidGenerator->generate();
+        $commentEntity = new Comment($uuid, $article->id, $user->id, $commentBody);
         $this->commentRepository->store($commentEntity);
 
         return $commentEntity;

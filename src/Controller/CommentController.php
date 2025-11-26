@@ -44,7 +44,9 @@ class CommentController
             );
         }
 
-        $doctrineComment = $entityManager->find(Comment::class, $commentEntity->getId());
+        $doctrineComment = $entityManager
+            ->getRepository(Comment::class)
+            ->findOneBy(['uuid' => $commentEntity->getUuid()]);
 
         return new JsonResponse([
             'comment' => [

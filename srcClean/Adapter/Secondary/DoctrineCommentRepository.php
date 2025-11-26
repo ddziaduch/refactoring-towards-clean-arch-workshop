@@ -23,11 +23,10 @@ final class DoctrineCommentRepository implements CommentRepositoryInterface
             $this->entityManager->find(Article::class, $domainEntity->getArticleId()),
             $this->entityManager->find(User::class, $domainEntity->getAuthorId()),
             $domainEntity->getBody(),
+            $domainEntity->getUuid(),
         );
 
         $this->entityManager->persist($doctrineEntity);
         $this->entityManager->flush();
-
-        $domainEntity->markAsCreated($doctrineEntity->id());
     }
 }

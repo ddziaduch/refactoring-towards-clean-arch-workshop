@@ -11,6 +11,7 @@ class Comment
     #[ORM\GeneratedValue]
     #[ORM\Id]
     private ?int $id = null;
+
     #[ORM\Column]
     public readonly \DateTimeImmutable $createdAt;
     #[ORM\Column]
@@ -23,6 +24,8 @@ class Comment
         public readonly User $author,
         #[ORM\Column(type: 'text')]
         public readonly string $body,
+        #[ORM\Column(options: ['default' => 'gen_random_uuid()'])]
+        private string $uuid,
     ) {
         $now = new \DateTimeImmutable();
         $this->createdAt = $now;

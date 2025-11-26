@@ -6,9 +6,9 @@ namespace Clean\Domain\Entity;
 
 final class Comment
 {
-    private ?int $id = null;
-
     public function __construct(
+        // uuid
+        private string $id,
         private int $articleId,
         private int $authorId,
         private string $body,
@@ -30,17 +30,8 @@ final class Comment
         return $this->body;
     }
 
-    public function getId(): int
+    public function getUuid(): string
     {
         return $this->id;
-    }
-
-    public function markAsCreated(int $id): void
-    {
-        if ($this->id !== null) {
-            throw new \DomainException('Cannot change comment ID.');
-        }
-
-        $this->id = $id;
     }
 }
