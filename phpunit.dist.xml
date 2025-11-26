@@ -12,7 +12,7 @@
          failOnRisky="true"
          failOnWarning="true">
     <php>
-        <env name="KERNEL_CLASS" value="App\Kernel"/>
+        <env name="KERNEL_CLASS" value="Clean\Infrastructure\Kernel"/>
         <env name="APP_ENV" value="test"/>
     </php>
     <testsuites>

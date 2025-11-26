@@ -1,9 +1,9 @@
 <?php
 
-namespace App\DataFixtures;
+namespace Clean\Infrastructure;
 
-use App\Entity\Article;
-use App\Entity\User;
+use Clean\Infrastructure\DoctrineEntity\Article;
+use Clean\Infrastructure\DoctrineEntity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ObjectManager;

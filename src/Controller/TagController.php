@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Tag;
+use Clean\Infrastructure\DoctrineEntity\Tag;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;

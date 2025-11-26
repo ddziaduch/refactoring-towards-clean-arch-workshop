@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Clean\Adapter\Secondary;
 
-use App\Entity\Article;
-use App\Entity\User;
-use Clean\Domain\Entity\Comment;
 use Clean\Application\Port\Secondary\CommentRepositoryInterface;
+use Clean\Domain\Entity\Comment;
+use Clean\Infrastructure\DoctrineEntity\Article;
+use Clean\Infrastructure\DoctrineEntity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class DoctrineCommentRepository implements CommentRepositoryInterface
@@ -19,7 +19,7 @@ final class DoctrineCommentRepository implements CommentRepositoryInterface
 
     public function store(Comment $domainEntity): void
     {
-        $doctrineEntity = new \App\Entity\Comment(
+        $doctrineEntity = new \Clean\Infrastructure\DoctrineEntity\Comment(
             $this->entityManager->find(Article::class, $domainEntity->getArticleId()),
             $this->entityManager->find(User::class, $domainEntity->getAuthorId()),
             $domainEntity->getBody(),

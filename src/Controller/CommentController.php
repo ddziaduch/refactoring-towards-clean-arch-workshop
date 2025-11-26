@@ -2,18 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
-use App\Entity\Comment;
-use App\Entity\User;
-use Clean\Application\Exception\EntityNotFoundException;
-use Clean\Application\Port\Primary\CreateCommentUseCaseInterface;
+use Clean\Infrastructure\DoctrineEntity\Article;
+use Clean\Infrastructure\DoctrineEntity\Comment;
+use Clean\Infrastructure\DoctrineEntity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Clean\Adapter\Primary;
 
-use App\Entity\User;
 use Clean\Application\Exception\EntityNotFoundException;
 use Clean\Application\Port\Primary\CreateCommentUseCaseInterface;
+use Clean\Infrastructure\DoctrineEntity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;

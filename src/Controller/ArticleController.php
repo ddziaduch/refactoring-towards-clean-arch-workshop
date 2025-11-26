@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
-use App\Entity\Tag;
-use App\Entity\User;
+use Clean\Infrastructure\DoctrineEntity\Article;
+use Clean\Infrastructure\DoctrineEntity\Tag;
+use Clean\Infrastructure\DoctrineEntity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;

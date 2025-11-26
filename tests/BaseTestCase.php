@@ -2,14 +2,14 @@
 
 namespace App\Tests;
 
-use App\Entity\Article;
-use App\Entity\Comment;
+use Clean\Infrastructure\AppFixtures;
+use Clean\Infrastructure\DoctrineEntity\Article;
+use Clean\Infrastructure\DoctrineEntity\Comment;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\DataFixtures\AppFixtures;
 
 abstract class BaseTestCase extends WebTestCase
 {

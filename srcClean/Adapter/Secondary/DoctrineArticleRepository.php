@@ -19,7 +19,7 @@ final class DoctrineArticleRepository implements ArticleRepositoryInterface
 
     public function getBySlug(string $articleSlug): Article
     {
-        $doctrineEntity = $this->entityManager->getRepository(\App\Entity\Article::class)->findOneBy(['slug' => $articleSlug]);
+        $doctrineEntity = $this->entityManager->getRepository(\Clean\Infrastructure\DoctrineEntity\Article::class)->findOneBy(['slug' => $articleSlug]);
 
         if (!$doctrineEntity) {
             throw new EntityNotFoundException('Article not found');
@@ -30,7 +30,7 @@ final class DoctrineArticleRepository implements ArticleRepositoryInterface
 
     public function findBySlug(string $articleSlug): ?Article
     {
-        $doctrineEntity = $this->entityManager->getRepository(\App\Entity\Article::class)->findOneBy(['slug' => $articleSlug]);
+        $doctrineEntity = $this->entityManager->getRepository(\Clean\Infrastructure\DoctrineEntity\Article::class)->findOneBy(['slug' => $articleSlug]);
 
         if (!$doctrineEntity) {
             return null;
