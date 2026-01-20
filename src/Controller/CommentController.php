@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Clean\Application\CreateArticleCommentUseCase;
+use Clean\Application\Exception\ArticleNotFoundException;
 use Clean\Domain\Entity\Article;
 use Clean\Domain\Entity\Comment;
 use App\Entity\User;
@@ -24,11 +26,14 @@ class CommentController
         string $slug,
         #[CurrentUser] User $user,
         Request $request,
-        EntityManagerInterface $entityManager,
-        \Clean\Application\CreateArticleCommentUseCase $useCase,
+        CreateArticleCommentUseCase $useCase,
     ) {
         $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
-        $commentEntity = ($useCase)($slug, $user, $comment['body']);
+        try {
+            $commentEntity = ($useCase)($slug, $user, $comment['body']);
+        } catch (ArticleNotFoundException) {
+            throw new NotFoundHttpException('Article not found');
+        }
 
         return new JsonResponse([
             'comment' => [
