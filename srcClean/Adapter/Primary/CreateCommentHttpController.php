@@ -27,7 +27,7 @@ final class CreateCommentHttpController
     ) {
         $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
         try {
-            $commentEntity = ($useCase)($slug, $user, $comment['body']);
+            $commentEntity = ($useCase)($slug, $user->id, $comment['body']);
         } catch (ArticleNotFoundException) {
             throw new NotFoundHttpException('Article not found');
         }

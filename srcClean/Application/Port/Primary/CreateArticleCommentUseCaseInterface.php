@@ -14,7 +14,7 @@ interface CreateArticleCommentUseCaseInterface
      */
     public function __invoke(
         string $articleSlug,
-        User $user,
+        int $userId,
         string $commentBody,
     ): Comment;
 }
