@@ -25,17 +25,10 @@ class CommentController
         #[CurrentUser] User $user,
         Request $request,
         EntityManagerInterface $entityManager,
+        \Clean\Application\CreateArticleCommentUseCase $useCase,
     ) {
-        $article = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
-
-        if (!$article) {
-            throw new NotFoundHttpException('Article not found');
-        }
-
         $comment = json_decode($request->getContent(), true)['comment'] ?? throw new BadRequestHttpException('Comment is missing');
-        $commentEntity = new Comment($article, $user, $comment['body']);
-        $entityManager->persist($commentEntity);
-        $entityManager->flush();
+        $commentEntity = ($useCase)($slug, $user, $comment['body']);
 
         return new JsonResponse([
             'comment' => [
