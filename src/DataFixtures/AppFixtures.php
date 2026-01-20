@@ -29,6 +29,8 @@ class AppFixtures extends Fixture
             $manager->persist($user);
 
             $article = new Article(
+                // test-article-user-first
+                // test-article-user-second
                 slug: sprintf('test-article-user-%s', $name),
                 title: 'Test Article Title',
                 description: 'Test Article Description',
