@@ -4,5 +4,11 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+controllersClean:
+    resource:
+        path: ../srcClean/Adapter/Primary
+        namespace: Clean\Adapter\Primary
+    type: attribute
+
 Login:
     path: /api/users/login

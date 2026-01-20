@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Clean\Application;
 
 use Clean\Application\Exception\ArticleNotFoundException;
+use Clean\Application\Port\Primary\CreateArticleCommentUseCaseInterface;
 use Clean\Application\Port\Secondary\ArticleRepository;
 use Clean\Domain\Entity\Comment;
 use App\Entity\User;
 use Clean\Application\Port\Secondary\CommentRepository;
 
-final class CreateArticleCommentUseCase
+final class CreateArticleCommentUseCase implements CreateArticleCommentUseCaseInterface
 {
     public function __construct(
         private CommentRepository $commentRepository,
