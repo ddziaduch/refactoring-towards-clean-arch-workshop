@@ -2,6 +2,8 @@
 
 namespace App\Tests;
 
+use App\Entity\Article;
+use App\Entity\Comment;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,6 +24,18 @@ abstract class BaseTestCase extends WebTestCase
         $container = $this->client->getContainer();
         $em = $container->get(EntityManagerInterface::class);
         assert($em instanceof EntityManagerInterface);
+
+        $comments = $em->getRepository(Comment::class)->findAll();
+        foreach ($comments as $comment) {
+            $em->remove($comment);
+        }
+
+        $articles = $em->getRepository(Article::class)->findAll();
+        foreach ($articles as $article) {
+            $em->remove($article);
+        }
+
+        $em->flush();
 
         // Purge database before each test
         $purger = new ORMPurger($em);
