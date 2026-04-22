@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
-use App\Entity\Comment;
+use Clean\Domain\Entities\Comment;
 use PHPUnit\Framework\Attributes\Test;
 
 final class CreateCommentFunctionalTest extends BaseTestCase

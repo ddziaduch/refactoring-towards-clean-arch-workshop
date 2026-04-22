@@ -2,7 +2,7 @@
 
 namespace Clean\Application\UseCases;
 
-use App\Entity\Comment;
+use Clean\Domain\Entities\Comment;
 use App\Entity\User;
 use Clean\Application\Exceptions\ArticleNotFoundException;
 use Clean\Application\Ports\Primary\CreateArticleCommentUseCaseInterface;

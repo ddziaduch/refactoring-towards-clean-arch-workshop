@@ -2,7 +2,7 @@
 
 namespace Clean\Application\Ports\Secondary;
 
-use App\Entity\Comment;
+use Clean\Domain\Entities\Comment;
 
 interface CommentRepositoryInterface
 {

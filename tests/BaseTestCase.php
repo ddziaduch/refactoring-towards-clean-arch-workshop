@@ -2,8 +2,8 @@
 
 namespace App\Tests;
 
-use App\Entity\Article;
-use App\Entity\Comment;
+use Clean\Domain\Entities\Article;
+use Clean\Domain\Entities\Comment;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;

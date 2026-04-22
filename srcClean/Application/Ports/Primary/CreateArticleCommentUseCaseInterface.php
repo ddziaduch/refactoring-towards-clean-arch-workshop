@@ -2,7 +2,7 @@
 
 namespace Clean\Application\Ports\Primary;
 
-use App\Entity\Comment;
+use Clean\Domain\Entities\Comment;
 use App\Entity\User;
 use Clean\Application\Exceptions\ArticleNotFoundException;
 

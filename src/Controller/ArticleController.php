@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
+use Clean\Domain\Entities\Article;
 use App\Entity\Tag;
 use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;

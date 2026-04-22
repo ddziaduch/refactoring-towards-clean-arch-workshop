@@ -2,7 +2,7 @@
 
 namespace Clean\Application\Ports\Secondary;
 
-use App\Entity\Article;
+use Clean\Domain\Entities\Article;
 use Clean\Application\Exceptions\ArticleNotFoundException;
 
 interface ArticleRepositoryInterface

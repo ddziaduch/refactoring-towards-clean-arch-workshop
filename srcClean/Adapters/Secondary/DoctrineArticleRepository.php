@@ -2,7 +2,7 @@
 
 namespace Clean\Adapters\Secondary;
 
-use App\Entity\Article;
+use Clean\Domain\Entities\Article;
 use Clean\Application\Exceptions\ArticleNotFoundException;
 use Clean\Application\Ports\Secondary\ArticleRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;

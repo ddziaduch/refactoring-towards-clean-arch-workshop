@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
-use App\Entity\Comment;
+use Clean\Domain\Entities\Article;
+use Clean\Domain\Entities\Comment;
 use App\Entity\User;
 use Clean\Application\Exceptions\ArticleNotFoundException;
 use Clean\Application\Ports\Primary\CreateArticleCommentUseCaseInterface;
