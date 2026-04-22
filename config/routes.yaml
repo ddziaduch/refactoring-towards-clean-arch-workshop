@@ -1,7 +1,13 @@
-controllers:
+legacyControllers:
     resource:
         path: ../src/Controller/
         namespace: App\Controller
+    type: attribute
+
+controllers:
+    resource:
+        path: ../srcClean/Adapters/Primary/
+        namespace: Clean\Adapters\Primary
     type: attribute
 
 Login:

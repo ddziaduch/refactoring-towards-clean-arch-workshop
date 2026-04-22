@@ -9,6 +9,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+// this is not a production code, but related to the dev and test env
+// todo: where should I be??
 class AppFixtures extends Fixture
 {
     private UserPasswordHasherInterface $passwordHasher;

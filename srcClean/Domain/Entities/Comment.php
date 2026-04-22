@@ -11,7 +11,9 @@ class Comment
     #[ORM\Column]
     #[ORM\GeneratedValue]
     #[ORM\Id]
-    private ?int $id = null;
+    // sorry, had to do this
+    // todo: user reflection in the test to make me private!
+    public ?int $id = null;
     #[ORM\Column]
     public readonly \DateTimeImmutable $createdAt;
     #[ORM\Column]
@@ -24,8 +26,8 @@ class Comment
         public readonly User $author,
         #[ORM\Column(type: 'text')]
         public readonly string $body,
+        \DateTimeImmutable $now
     ) {
-        $now = new \DateTimeImmutable();
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }

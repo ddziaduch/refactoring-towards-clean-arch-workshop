@@ -8,12 +8,16 @@ use Clean\Application\Exceptions\ArticleNotFoundException;
 use Clean\Application\Ports\Primary\CreateArticleCommentUseCaseInterface;
 use Clean\Application\Ports\Secondary\ArticleRepositoryInterface;
 use Clean\Application\Ports\Secondary\CommentRepositoryInterface;
+use Psr\Clock\ClockInterface;
+use Psr\Log\LoggerInterface;
 
 class CreateArticleCommentUseCase implements CreateArticleCommentUseCaseInterface
 {
     public function __construct(
         private ArticleRepositoryInterface $articleRepository,
         private CommentRepositoryInterface $commentRepository,
+        private LoggerInterface $logger,
+        private ClockInterface $clock,
     ) {}
 
     /**
@@ -27,11 +31,22 @@ class CreateArticleCommentUseCase implements CreateArticleCommentUseCaseInterfac
         $article = $this->articleRepository->findOneBySlug($slug);
 
         if (!$article) {
+            $this->logger->error('Article not found', [
+                'class_name' => self::class,
+                'slug' => $slug,
+                'timestamp' => '2026-04-22T15:50:50Z'
+            ]);
             throw new ArticleNotFoundException();
         }
 
-        $commentEntity = new Comment($article, $user, $commentBody);
+        $commentEntity = new Comment(
+            $article,
+            $user,
+            $commentBody,
+            $this->clock->now(),
+        );
 
+        // log this
         $this->commentRepository->save($commentEntity);
 
         return $commentEntity->id();

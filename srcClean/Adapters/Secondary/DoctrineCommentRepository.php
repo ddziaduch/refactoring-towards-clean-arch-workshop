@@ -14,6 +14,7 @@ class DoctrineCommentRepository implements CommentRepositoryInterface
 
     public function save(Comment $commentEntity): void
     {
+        // log this happen
         $this->entityManager->persist($commentEntity);
         $this->entityManager->flush();
     }
