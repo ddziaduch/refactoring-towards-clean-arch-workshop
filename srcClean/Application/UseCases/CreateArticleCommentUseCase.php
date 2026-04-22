@@ -2,34 +2,37 @@
 
 namespace Clean\Application\UseCases;
 
-use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\User;
-use Clean\Application\Ports\CreateArticleCommentUseCaseInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Clean\Application\Exceptions\ArticleNotFoundException;
+use Clean\Application\Ports\Primary\CreateArticleCommentUseCaseInterface;
+use Clean\Application\Ports\Secondary\ArticleRepositoryInterface;
+use Clean\Application\Ports\Secondary\CommentRepositoryInterface;
 
 class CreateArticleCommentUseCase implements CreateArticleCommentUseCaseInterface
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private ArticleRepositoryInterface $articleRepository,
+        private CommentRepositoryInterface $commentRepository,
     ) {}
 
+    /**
+     * @throws ArticleNotFoundException
+     */
     public function run(
         string $slug,
         string $commentBody,
         User $user,
     ): Comment {
-        $article = $this->entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
+        $article = $this->articleRepository->findOneBySlug($slug);
 
         if (!$article) {
-            throw new NotFoundHttpException('Article not found');
+            throw new ArticleNotFoundException();
         }
 
-
         $commentEntity = new Comment($article, $user, $commentBody);
-        $this->entityManager->persist($commentEntity);
-        $this->entityManager->flush();
+
+        $this->commentRepository->save($commentEntity);
 
         return $commentEntity;
     }

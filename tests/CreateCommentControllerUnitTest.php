@@ -7,7 +7,7 @@ namespace App\Tests;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\User;
-use Clean\Application\Ports\CreateArticleCommentUseCaseInterface;
+use Clean\Application\Ports\Primary\CreateArticleCommentUseCaseInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\Attributes\Test;
 

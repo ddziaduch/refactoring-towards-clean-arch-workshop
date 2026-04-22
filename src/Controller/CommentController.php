@@ -5,7 +5,8 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\User;
-use Clean\Application\Ports\CreateArticleCommentUseCaseInterface;
+use Clean\Application\Exceptions\ArticleNotFoundException;
+use Clean\Application\Ports\Primary\CreateArticleCommentUseCaseInterface;
 use Clean\Application\UseCases\CreateArticleCommentUseCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,11 +31,15 @@ class CommentController
     ) {
         $commentBody = json_decode($request->getContent(), true)['comment']['body'] ?? throw new BadRequestHttpException('Comment is missing');
 
-        $commentEntity = $useCase->run(
-            $slug,
-            $commentBody,
-            $user,
-        );
+        try {
+            $commentEntity = $useCase->run(
+                $slug,
+                $commentBody,
+                $user,
+            );
+        } catch (ArticleNotFoundException $e) {
+            throw new NotFoundHttpException($e->getMessage(), $e);
+        }
 
         return new JsonResponse([
             'comment' => [
