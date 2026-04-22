@@ -7,7 +7,7 @@ namespace App\Tests;
 use App\Entity\Comment;
 use PHPUnit\Framework\Attributes\Test;
 
-final class CreateCommentTest extends BaseTestCase
+final class CreateCommentFunctionalTest extends BaseTestCase
 {
     #[Test]
     public function happyPath(): void
