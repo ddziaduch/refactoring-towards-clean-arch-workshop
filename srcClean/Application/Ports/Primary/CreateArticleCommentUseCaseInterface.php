@@ -2,7 +2,6 @@
 
 namespace Clean\Application\Ports\Primary;
 
-use Clean\Domain\Entities\Comment;
 use App\Entity\User;
 use Clean\Application\Exceptions\ArticleNotFoundException;
 
@@ -18,5 +17,5 @@ interface CreateArticleCommentUseCaseInterface
         string $slug,
         string $commentBody,
         User $user,
-    ): Comment;
+    ): int;
 }

@@ -28,11 +28,13 @@ class CommentController
         #[CurrentUser] User $user,
         Request $request,
         CreateArticleCommentUseCaseInterface $useCase,
+        EntityManagerInterface $entityManager,
     ) {
-        $commentBody = json_decode($request->getContent(), true)['comment']['body'] ?? throw new BadRequestHttpException('Comment is missing');
+        $commentBody = json_decode($request->getContent(), true)['comment']['body']
+            ?? throw new BadRequestHttpException('Comment is missing');
 
         try {
-            $commentEntity = $useCase->run(
+            $commentId = $useCase->run(
                 $slug,
                 $commentBody,
                 $user,
@@ -40,6 +42,8 @@ class CommentController
         } catch (ArticleNotFoundException $e) {
             throw new NotFoundHttpException($e->getMessage(), $e);
         }
+
+        $commentEntity = $entityManager->find(Comment::class, $commentId);
 
         return new JsonResponse([
             'comment' => [

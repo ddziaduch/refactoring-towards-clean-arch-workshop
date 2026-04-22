@@ -23,7 +23,7 @@ class CreateArticleCommentUseCase implements CreateArticleCommentUseCaseInterfac
         string $slug,
         string $commentBody,
         User $user,
-    ): Comment {
+    ): int {
         $article = $this->articleRepository->findOneBySlug($slug);
 
         if (!$article) {
@@ -34,6 +34,6 @@ class CreateArticleCommentUseCase implements CreateArticleCommentUseCaseInterfac
 
         $this->commentRepository->save($commentEntity);
 
-        return $commentEntity;
+        return $commentEntity->id();
     }
 }
