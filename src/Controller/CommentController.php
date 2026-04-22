@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
+use Clean\Application\Ports\Secondary\CommentDtoFinder;
 use Clean\Domain\Entities\Article;
 use Clean\Domain\Entities\Comment;
 use App\Entity\User;
 use Clean\Application\Exceptions\ArticleNotFoundException;
 use Clean\Application\Ports\Primary\CreateArticleCommentUseCaseInterface;
-use Clean\Application\UseCases\CreateArticleCommentUseCase;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +28,7 @@ class CommentController
         #[CurrentUser] User $user,
         Request $request,
         CreateArticleCommentUseCaseInterface $useCase,
-        EntityManagerInterface $entityManager,
+        CommentDtoFinder $dtoFinder,
     ) {
         $commentBody = json_decode($request->getContent(), true)['comment']['body']
             ?? throw new BadRequestHttpException('Comment is missing');
@@ -43,20 +43,20 @@ class CommentController
             throw new NotFoundHttpException($e->getMessage(), $e);
         }
 
-        $commentEntity = $entityManager->find(Comment::class, $commentId);
+        $comment = $dtoFinder->findById($commentId);
 
         return new JsonResponse([
             'comment' => [
                 'author' => [
-                    'bio' => $commentEntity->author->bio,
-                    'following' => $user && $commentEntity->author->following->contains($user),
+                    'bio' => $user->bio,
+                    'following' => $user->following->contains($user),
                     'image' => $user->image,
                     'username' => $user->username,
                 ],
-                'body' => $commentEntity->body,
-                'createdAt' => $commentEntity->createdAt->format(DATE_ATOM),
-                'id' => $commentEntity->id(),
-                'updatedAt' => $commentEntity->updatedAt->format(DATE_ATOM),
+                'body' => $comment->body,
+                'createdAt' => $comment->createdAt->format(DATE_ATOM),
+                'id' => $comment->id,
+                'updatedAt' => $comment->updatedAt->format(DATE_ATOM),
             ],
         ]);
     }
